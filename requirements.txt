@@ -3,6 +3,3 @@ ipython
 boltons
 spooky
 sqlalchemy
-anyconfig
-PyYAML
-invoke

@@ -5,13 +5,11 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.engine.url import URL
 from sqlalchemy.orm import sessionmaker, scoped_session
 
-from quotes.singletons import session
-
 
 class Base:
 
     @classmethod
-    def connect(cls, url):
+    def connect(cls, url=None):
 
         """
         Set the database connection.
@@ -37,9 +35,15 @@ class Base:
 
         factory = sessionmaker(bind=engine)
 
-        cls.session = scoped_session(factory)
+        session = scoped_session(factory)
 
-        cls.query = cls.session.query_property()
+        # Attach query shortcut.
+        cls.query = session.query_property()
+
+        # Create tables.
+        cls.metadata.create_all(engine)
+
+        return session
 
 
 Base = declarative_base(cls=Base)

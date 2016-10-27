@@ -2,7 +2,6 @@
 
 from sqlalchemy import Column, Integer, String, PrimaryKeyConstraint
 
-from quotes.singletons import config, session
 from quotes.models import Base
 
 
