@@ -46,7 +46,7 @@ class Text:
 
         ]
 
-    def hashed_shingles(self, n: int):
+    def shingles(self, n: int):
 
         """
         Generate "shingles," with the tokens hashed to an integer.
