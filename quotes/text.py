@@ -8,10 +8,19 @@ from boltons.iterutils import windowed_iter
 from spooky import hash64
 
 
-Token = namedtuple('Tuple', ['token', 'char1', 'char2'])
+Token = namedtuple('Tuple', [
+    'token',
+    'char1',
+    'char2',
+])
 
 
-Shingle = namedtuple('Shingle', ['key', 'order', 'char1', 'char2'])
+Shingle = namedtuple('Shingle', [
+    'key',
+    'order',
+    'char1',
+    'char2',
+])
 
 
 class Text:
@@ -56,9 +65,13 @@ class Text:
 
             tokens = [n.token for n in ngram]
 
+            # Token hash.
             key = hash64('.'.join(tokens))
 
+            # Start characater.
             char1 = ngram[0].char1
+
+            # End character.
             char2 = ngram[-1].char2
 
             yield Shingle(

@@ -12,18 +12,12 @@ class Shingle(Base):
 
     __table_args__ = (
         PrimaryKeyConstraint(
-            'corpus',
-            'identifier',
             'key',
             'order',
             'char1',
             'char2',
         ),
     )
-
-    corpus = Column(String, nullable=False)
-
-    identifier = Column(Integer, nullable=False)
 
     key = Column(Integer, nullable=False)
 
