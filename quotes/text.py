@@ -2,8 +2,16 @@
 
 import re
 
+from collections import namedtuple
+
 from boltons.iterutils import windowed_iter
 from spooky import hash32
+
+
+Token = namedtuple('Tuple', ['token', 'char1', 'char2'])
+
+
+Shingle = namedtuple('Shingle', ['key', 'order', 'char1', 'char2'])
 
 
 class Text:
@@ -26,7 +34,17 @@ class Text:
 
         self.text = text
 
-        self.tokens = re.findall('[a-z]+', self.text.lower())
+        self.tokens = [
+
+            Token(
+                token=m.group(0),
+                char1=m.start(),
+                char2=m.end(),
+            )
+
+            for m in re.finditer('[a-z]+', self.text.lower())
+
+        ]
 
     def hashed_shingles(self, n: int):
 
@@ -35,4 +53,17 @@ class Text:
         """
 
         for i, ngram in enumerate(windowed_iter(self.tokens, n)):
-            yield (hash32('.'.join(ngram)), i)
+
+            tokens = [n.token for n in ngram]
+
+            key = hash32('.'.join(tokens))
+
+            char1 = ngram[0].char1
+            char2 = ngram[-1].char2
+
+            yield Shingle(
+                key=key,
+                order=i,
+                char1=char1,
+                char2=char2,
+            )
