@@ -8,7 +8,6 @@ from quotes.models import Base
 
 class Shingle(Base):
 
-
     __tablename__ = 'shingle'
 
     __table_args__ = (

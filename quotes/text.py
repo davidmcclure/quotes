@@ -5,7 +5,7 @@ import re
 from collections import namedtuple
 
 from boltons.iterutils import windowed_iter
-from spooky import hash32
+from spooky import hash64
 
 
 Token = namedtuple('Tuple', ['token', 'char1', 'char2'])
@@ -56,7 +56,7 @@ class Text:
 
             tokens = [n.token for n in ngram]
 
-            key = hash32('.'.join(tokens))
+            key = hash64('.'.join(tokens))
 
             char1 = ngram[0].char1
             char2 = ngram[-1].char2
