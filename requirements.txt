@@ -3,3 +3,4 @@ ipython
 boltons
 spooky
 sqlalchemy
+jupyter
