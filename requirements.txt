@@ -2,3 +2,4 @@
 ipython
 boltons
 spooky
+sqlalchemy
