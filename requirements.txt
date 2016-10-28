@@ -6,4 +6,6 @@ sqlalchemy
 jupyter
 blessings
 wordfreq
+numpy
 scandir
+psutil

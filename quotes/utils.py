@@ -3,6 +3,7 @@
 import re
 import scandir
 import os
+import psutil
 
 
 def clean_text(text: str) -> str:
@@ -30,3 +31,16 @@ def scan_paths(root_dir: str, pattern: str):
             # Match the extension.
             if pattern.search(name):
                 yield os.path.join(root, name)
+
+
+def mem_pct():
+
+    """
+    Get the percentage of available memory used by the process.
+
+    Returns: float
+    """
+
+    mem = psutil.virtual_memory()
+
+    return mem.percent
