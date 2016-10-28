@@ -48,3 +48,11 @@ class Text:
             if m.group(0) not in blacklist
 
         ]
+
+    def sequence(self):
+
+        """
+        Provide the raw token stream.
+        """
+
+        return [t.token for t in self.tokens]
