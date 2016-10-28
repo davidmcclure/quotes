@@ -8,7 +8,7 @@ from .scatter import Scatter
 
 class QueryStacks(Scatter):
 
-    def __init__(self, corpus_path: str, query_path: str):
+    def __init__(self, corpus_path: str, text_path: str):
 
         """
         Set the input paths.
@@ -16,7 +16,7 @@ class QueryStacks(Scatter):
 
         self.corpus_path = corpus_path
 
-        self.text = Text.from_txt(query_path)
+        self.text = Text.from_txt(text_path)
 
     def args(self):
 
@@ -32,4 +32,14 @@ class QueryStacks(Scatter):
         Hydrate a text from the corpus, align with the query.
         """
 
+        text = Text.from_stacks(path)
+
+        matches = self.text.match(text)
+
+        for m in matches:
+            print('QUERY', self.text.bold_snippet(m.a, m.size))
+            print('MATCH', text.bold_snippet(m.b, m.size))
+            print('-'*50)
+
+    def flush(self):
         pass

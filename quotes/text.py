@@ -74,7 +74,7 @@ class Text:
 
         return [t.token for t in self.tokens]
 
-    def match(self, text, min_size: int=5):
+    def match(self, text, min_size: int=3):
 
         """
         Find alignments with another text.
