@@ -2,6 +2,7 @@
 
 from quotes.text import Text
 from quotes.utils import scan_paths
+from quotes.models import Match
 
 from .scatter import Scatter
 
