@@ -19,7 +19,7 @@ Token = namedtuple('Tuple', [
 ])
 
 
-blacklist = set(top_n_list('en', 500))
+blacklist = set(top_n_list('en', 200))
 
 
 class Text:
