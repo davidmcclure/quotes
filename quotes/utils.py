@@ -1,6 +1,8 @@
 
 
 import re
+import scandir
+import os
 
 
 def clean_text(text: str) -> str:
@@ -10,3 +12,21 @@ def clean_text(text: str) -> str:
     """
 
     return re.sub('\s{2,}|\n', ' ', text.strip())
+
+
+def scan_paths(root_dir: str, pattern: str):
+
+    """
+    Walk a directory and yield file paths that match a pattern.
+    """
+
+    root_dir = os.path.abspath(root_dir)
+
+    pattern = re.compile(pattern)
+
+    for root, dirs, files in scandir.walk(root_dir, followlinks=True):
+        for name in files:
+
+            # Match the extension.
+            if pattern.search(name):
+                yield os.path.join(root, name)

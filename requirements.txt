@@ -6,3 +6,4 @@ sqlalchemy
 jupyter
 blessings
 wordfreq
+scandir
