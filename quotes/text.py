@@ -3,9 +3,7 @@
 import re
 
 from collections import namedtuple
-
-from boltons.iterutils import windowed_iter
-from spooky import hash64
+from wordfreq import top_n_list
 
 
 Token = namedtuple('Tuple', [
@@ -15,18 +13,13 @@ Token = namedtuple('Tuple', [
 ])
 
 
-Shingle = namedtuple('Shingle', [
-    'key',
-    'order',
-    'char1',
-    'char2',
-])
+blacklist = set(top_n_list('en', 500))
 
 
 class Text:
 
     @classmethod
-    def from_file(cls, path: str):
+    def from_txt(cls, path: str):
 
         """
         Read from a text file.
@@ -52,31 +45,6 @@ class Text:
             )
 
             for m in re.finditer('[a-z]+', self.text.lower())
+            if m.group(0) not in blacklist
 
         ]
-
-    def shingles(self, n: int):
-
-        """
-        Generate "shingles," with the tokens hashed to an integer.
-        """
-
-        for i, ngram in enumerate(windowed_iter(self.tokens, n)):
-
-            tokens = [n.token for n in ngram]
-
-            # Token hash.
-            key = hash64('.'.join(tokens))
-
-            # Start characater.
-            char1 = ngram[0].char1
-
-            # End character.
-            char2 = ngram[-1].char2
-
-            yield Shingle(
-                key=key,
-                order=i,
-                char1=char1,
-                char2=char2,
-            )

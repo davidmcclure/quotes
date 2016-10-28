@@ -4,3 +4,4 @@ boltons
 spooky
 sqlalchemy
 jupyter
+wordfreq
