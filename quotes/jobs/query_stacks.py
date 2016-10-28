@@ -37,6 +37,7 @@ class QueryStacks(Scatter):
 
         matches = self.text.match(text)
 
+        # TODO|dev
         for m in matches:
             print('QUERY', self.text.bold_snippet(m.a, m.size))
             print('MATCH', text.bold_snippet(m.b, m.size))
