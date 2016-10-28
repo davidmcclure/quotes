@@ -89,7 +89,7 @@ class Text:
             if match.size >= min_size:
                 yield match
 
-    def snippet(self, start: int, size: int, padding: int=5):
+    def snippet(self, start: int, size: int, padding: int=10):
 
         """
         Hydrate a snippet.
