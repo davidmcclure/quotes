@@ -23,7 +23,6 @@ class Base:
         engine = create_engine(db_url)
 
         # Fix transaction bugs in pysqlite.
-        # http://docs.sqlalchemy.org/en/rel_1_0/dialects/sqlite.html#pysqlite-serializable
 
         @event.listens_for(engine, 'connect')
         def connect(conn, record):
@@ -44,6 +43,27 @@ class Base:
         cls.metadata.create_all(engine)
 
         return session
+
+    def columns(self):
+
+        """
+        Get a list of column names.
+
+        Returns: list
+        """
+
+        return [c.name for c in self.__table__.columns]
+
+    def __iter__(self):
+
+        """
+        Generate column / value tuples.
+
+        Yields: (key, val)
+        """
+
+        for key in self.columns():
+            yield (key, getattr(self, key))
 
 
 Base = declarative_base(cls=Base)
