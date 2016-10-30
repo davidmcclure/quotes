@@ -2,6 +2,6 @@
 
 database: null
 
-stacks_dir: null
+stacks_dirs: []
 
 data_dir: null
