@@ -4,4 +4,6 @@ database: null
 
 stacks_dirs: []
 
+text_paths: []
+
 data_dir: null
