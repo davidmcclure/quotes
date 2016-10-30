@@ -24,27 +24,6 @@ blacklist = set(top_n_list('en', 200))
 
 class Text:
 
-    @classmethod
-    def from_txt(cls, path: str):
-
-        """
-        Read from a text file.
-        """
-
-        with open(path) as fh:
-            return cls(fh.read())
-
-    @classmethod
-    def from_stacks(cls, path: str):
-
-        """
-        Read from a Stacks JSON file.
-        """
-
-        with bz2.open(path, 'rt') as fh:
-            data = json.loads(fh.read())
-            return cls(data['plain_text'])
-
     def __init__(self, text: str):
 
         """
@@ -133,3 +112,40 @@ class Text:
             snippet += ' '
 
         return snippet + post
+
+
+class RawText(Text):
+
+    @classmethod
+    def from_file(cls, path: str):
+
+        """
+        Read from a text file.
+        """
+
+        with open(path) as fh:
+            return cls(fh.read())
+
+
+class StacksText(Text):
+
+    @classmethod
+    def from_file(cls, path: str):
+
+        """
+        Read from a Stacks JSON file.
+        """
+
+        with bz2.open(path, 'rt') as fh:
+            data = json.loads(fh.read())
+            return cls(data)
+
+    def __init__(self, data: dict):
+
+        """
+        Store the metadata.
+        """
+
+        super().__init__(data.pop('plain_text'))
+
+        self.metadata = data
