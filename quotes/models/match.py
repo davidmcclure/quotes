@@ -30,9 +30,9 @@ class Match(Base):
 
     b_identifier = Column(String, nullable=False)
 
-    b_title = Column(String, nullable=False)
+    b_title = Column(String, nullable=True)
 
-    b_author = Column(String, nullable=False)
+    b_author = Column(String, nullable=True)
 
     a_start = Column(Integer, nullable=False)
 
