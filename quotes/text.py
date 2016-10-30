@@ -108,11 +108,11 @@ class Text:
         end = min(start+size-1+padding, len(self.tokens)-1)
         char4 = self.tokens[end].char2
 
-        return (
+        return map(clean_text, [
             self.text[char1:char2],
             self.text[char2:char3],
             self.text[char3:char4],
-        )
+        ])
 
     def bold_snippet(self, *args, **kwargs):
 
@@ -122,11 +122,8 @@ class Text:
 
         term = Terminal()
 
-        # Clean the pieces.
-        pre, match, post = map(
-            clean_text,
-            self.snippet(*args, **kwargs),
-        )
+        # Get the snippet parts.
+        pre, match, post = self.snippet(*args, **kwargs)
 
         # Prefix + bold snippet.
         snippet = pre + ' ' + term.bold(match)
