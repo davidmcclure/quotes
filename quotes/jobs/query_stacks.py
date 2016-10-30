@@ -19,6 +19,8 @@ class QueryStacks(Scatter):
 
         self.text = Text.from_txt(text_path)
 
+        self.matches = []
+
     def args(self):
 
         """
@@ -44,4 +46,9 @@ class QueryStacks(Scatter):
             print('-'*50)
 
     def flush(self):
+
+        """
+        Flush matches to disk.
+        """
+
         pass

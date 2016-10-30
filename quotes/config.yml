@@ -1,5 +1,7 @@
 ---
 
+database: null
+
 stacks_dir: null
 
-database: null
+data_dir: null
