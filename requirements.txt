@@ -13,3 +13,4 @@ mpi4py
 anyconfig
 PyYAML
 invoke
+matplotlib

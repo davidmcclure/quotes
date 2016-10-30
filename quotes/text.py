@@ -93,26 +93,6 @@ class Text:
             self.text[char3:char4],
         ])
 
-    def bold_snippet(self, *args, **kwargs):
-
-        """
-        Print a snippet, with the match bolded.
-        """
-
-        term = Terminal()
-
-        # Get the snippet parts.
-        pre, match, post = self.snippet(*args, **kwargs)
-
-        # Prefix + bold snippet.
-        snippet = pre + ' ' + term.bold(match)
-
-        # Don't add a space before a punctuation mark.
-        if re.match('^[a-z]', post, re.I):
-            snippet += ' '
-
-        return snippet + post
-
 
 class RawText(Text):
 
