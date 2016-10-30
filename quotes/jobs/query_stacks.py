@@ -1,5 +1,7 @@
 
 
+import pickle
+
 from quotes.utils import scan_paths
 from quotes.text import RawText, StacksText
 from quotes.models import Match
@@ -9,7 +11,7 @@ from .scatter import Scatter
 
 class QueryStacks(Scatter):
 
-    def __init__(self, corpus_path: str, text_path: str, slug: str):
+    def __init__(self, corpus_path: str, slug: str, text_path: str):
 
         """
         Set the input paths.
@@ -17,9 +19,9 @@ class QueryStacks(Scatter):
 
         self.corpus_path = corpus_path
 
-        self.text = RawText.from_file(text_path)
-
         self.slug = slug
+
+        self.text = RawText.from_file(text_path)
 
         self.matches = []
 
@@ -74,4 +76,5 @@ class QueryStacks(Scatter):
         Flush matches to disk.
         """
 
-        print(self.matches)
+        with open('test', 'wb') as fh:
+            pickle.dump(self.matches, fh)
