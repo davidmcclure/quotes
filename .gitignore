@@ -89,5 +89,6 @@ ENV/
 # Rope project settings
 .ropeproject
 
-# SQLite
+# Quotes
 *.db
+/data

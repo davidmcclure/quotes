@@ -1,6 +1,11 @@
 
 
+import pickle
+
 from sqlalchemy import Column, Integer, String, PrimaryKeyConstraint
+from scandir import scandir
+
+from quotes.singletons import session
 
 from .base import Base
 
@@ -14,6 +19,8 @@ class Match(Base):
             'a_slug',
             'b_corpus',
             'b_identifier',
+            'a_start',
+            'b_start',
         ),
     )
 
@@ -44,3 +51,29 @@ class Match(Base):
     b_snippet = Column(String, nullable=False)
 
     b_suffix = Column(String, nullable=False)
+
+    @classmethod
+    def gather(cls, result_dir: str):
+
+        """
+        Bulk-insert matches.
+        """
+
+        # Gather pickle paths.
+        paths = [
+            d.path
+            for d in scandir(result_dir)
+            if d.is_file()
+        ]
+
+        # Walk paths.
+        for i, path in enumerate(paths):
+            with open(path, 'rb') as fh:
+
+                mappings = pickle.load(fh)
+
+                # Bulk-insert the rows.
+                session.bulk_insert_mappings(cls, mappings)
+                print(i)
+
+        session.commit()

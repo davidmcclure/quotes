@@ -1,6 +1,10 @@
 
 
+import os
 import pickle
+import uuid
+
+from typing import List
 
 from quotes.utils import scan_paths
 from quotes.text import RawText, StacksText
@@ -11,15 +15,18 @@ from .scatter import Scatter
 
 class QueryStacks(Scatter):
 
-    def __init__(self, corpus_path: str, slug: str, text_path: str):
+    def __init__(self, corpus_dirs: List[str], result_dir: str,
+            text_slug: str, text_path: str):
 
         """
         Set the input paths.
         """
 
-        self.corpus_path = corpus_path
+        self.corpus_dirs = corpus_dirs
 
-        self.slug = slug
+        self.result_dir = result_dir
+
+        self.text_slug = text_slug
 
         self.text = RawText.from_file(text_path)
 
@@ -31,7 +38,8 @@ class QueryStacks(Scatter):
         Generate corpus paths.
         """
 
-        yield from scan_paths(self.corpus_path, '\.bz2')
+        for cdir in self.corpus_dirs:
+            yield from scan_paths(cdir, '\.bz2')
 
     def process(self, path: str):
 
@@ -50,7 +58,7 @@ class QueryStacks(Scatter):
 
             self.matches.append(dict(
 
-                a_slug=self.slug,
+                a_slug=self.text_slug,
 
                 b_corpus=text.metadata['corpus'],
                 b_identifier=text.metadata['identifier'],
@@ -76,5 +84,7 @@ class QueryStacks(Scatter):
         Flush matches to disk.
         """
 
-        with open('test', 'wb') as fh:
+        path = os.path.join(self.result_dir, str(uuid.uuid4()))
+
+        with open(path, 'wb') as fh:
             pickle.dump(self.matches, fh)
