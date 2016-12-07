@@ -47,6 +47,9 @@ class QueryStacks(Scatter):
 
         text = StacksText.from_file(path)
 
+        if text['year'] < 1814 and text['year'] > 1824:
+            return
+
         matches = self.text.match(text)
 
         for m in matches:
