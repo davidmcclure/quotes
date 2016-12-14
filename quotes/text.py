@@ -7,7 +7,6 @@ import bz2
 from wordfreq import top_n_list
 from difflib import SequenceMatcher
 from collections import namedtuple
-from blessings import Terminal
 
 from quotes.utils import clean_text
 

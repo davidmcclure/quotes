@@ -47,7 +47,7 @@ class Scatter:
 
         print(rank, len(args))
 
-        ## ** Gather offsets, flush.
+        # ** Gather offsets, flush.
 
         for i, arg in enumerate(args):
 

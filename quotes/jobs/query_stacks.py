@@ -6,15 +6,19 @@ import uuid
 
 from quotes.utils import scan_paths
 from quotes.text import RawText, StacksText
-from quotes.models import Match
 
 from .scatter import Scatter
 
 
 class QueryStacks(Scatter):
 
-    def __init__(self, corpus_dirs, result_dir: str,
-            text_slug: str, text_path: str):
+    def __init__(
+        self,
+        corpus_dirs,
+        result_dir: str,
+        text_slug: str,
+        text_path: str,
+    ):
 
         """
         Set the input paths.

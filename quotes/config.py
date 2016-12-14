@@ -2,7 +2,6 @@
 
 import os
 import anyconfig
-import yaml
 
 from sqlalchemy import create_engine, event
 from sqlalchemy.orm import sessionmaker, scoped_session
