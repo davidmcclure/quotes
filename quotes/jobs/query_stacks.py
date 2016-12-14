@@ -3,8 +3,8 @@
 import os
 import pickle
 import uuid
+import dataset
 
-from quotes.utils import scan_paths
 from quotes.text import Text
 
 from .scatter import Scatter
@@ -12,17 +12,25 @@ from .scatter import Scatter
 
 class QueryStacks(Scatter):
 
-    def __init__(self, chadh_corpus: str, chadh_slug: str, stacks_db: str):
+    def __init__(self,
+                 chadh_corpus_dir: str,
+                 chadh_slug: str,
+                 stacks_db_url: str,
+                 result_dir: str):
 
         """
         Set the input paths.
         """
 
-        path = os.path.join(chadh_corpus, '{}.txt'.format(chadh_slug))
+        fname = '{}.txt'.format(chadh_slug)
+
+        path = os.path.join(chadh_corpus_dir, fname)
 
         self.text = Text.from_chadh_c19(path)
 
-        # TODO: stacks db
+        self.stacks_db = dataset.connect(stacks_db_url)
+
+        self.result_dir = result_dir
 
         self.matches = []
 
@@ -32,10 +40,14 @@ class QueryStacks(Scatter):
         Generate corpus paths.
         """
 
-        # TODO: Query pub date + 10.
+        pub_year = self.text.metadata['year']
 
-        for cdir in self.corpus_dirs:
-            yield from scan_paths(cdir, '\.bz2')
+        query = '''
+        SELECT path FROM text
+        WHERE corpus = "bpo" and year >= {} and year <= {}
+        '''.format(pub_year, pub_year+10)
+
+        return [r['path'] for r in self.stacks_db.query(query)]
 
     def process(self, path: str):
 
