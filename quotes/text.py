@@ -23,13 +23,30 @@ blacklist = set(top_n_list('en', 200))
 
 class Text:
 
-    def __init__(self, text: str):
+    @classmethod
+    def from_stacks(cls, path: str):
+
+        """
+        Read from a Stacks JSON file.
+        """
+
+        with bz2.open(path, 'rt') as fh:
+
+            metadata = json.loads(fh.read())
+
+            text = metadata.pop('plain_text')
+
+            return cls(text, metadata)
+
+    def __init__(self, text: str, metadata: dict=None):
 
         """
         Tokenize the text.
         """
 
         self.text = text
+
+        self.metadata = metadata or {}
 
         self.tokens = [
 
@@ -91,40 +108,3 @@ class Text:
             self.text[char2:char3],
             self.text[char3:char4],
         ])
-
-
-class RawText(Text):
-
-    @classmethod
-    def from_file(cls, path: str):
-
-        """
-        Read from a text file.
-        """
-
-        with open(path) as fh:
-            return cls(fh.read())
-
-
-class StacksText(Text):
-
-    @classmethod
-    def from_file(cls, path: str):
-
-        """
-        Read from a Stacks JSON file.
-        """
-
-        with bz2.open(path, 'rt') as fh:
-            data = json.loads(fh.read())
-            return cls(data)
-
-    def __init__(self, data: dict):
-
-        """
-        Store the metadata.
-        """
-
-        super().__init__(data.pop('plain_text'))
-
-        self.metadata = data
