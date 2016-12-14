@@ -2,6 +2,7 @@
 
 import re
 import json
+import os
 import bz2
 
 from wordfreq import top_n_list
@@ -37,6 +38,20 @@ class Text:
             text = metadata.pop('plain_text')
 
             return cls(text, metadata)
+
+    @classmethod
+    def from_chadh_c19(cls, path: str):
+
+        """
+        Read from a Chadwyck Healey C19 file.
+        """
+
+        slug = os.path.splitext(os.path.basename(path))[0]
+
+        year = int(re.search('[0-9]{4}', slug).group(0))
+
+        with open(path) as fh:
+            return cls(fh.read(), dict(slug=slug, year=year))
 
     def __init__(self, text: str, metadata: dict=None):
 
