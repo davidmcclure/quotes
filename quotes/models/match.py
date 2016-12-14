@@ -24,6 +24,7 @@ class Match(Base):
         ),
     )
 
+    # TODO: Store corpus+identifier.
     a_slug = Column(String, nullable=False)
 
     # B metadata.
