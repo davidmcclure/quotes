@@ -26,30 +26,25 @@ class Match(Base):
 
     a_slug = Column(String, nullable=False)
 
+    # B metadata.
     b_corpus = Column(String, nullable=False)
-
     b_identifier = Column(String, nullable=False)
-
     b_title = Column(String, nullable=True)
-
     b_author = Column(String, nullable=True)
 
+    # Match.
     a_start = Column(Integer, nullable=False)
-
     b_start = Column(Integer, nullable=False)
-
     size = Column(Integer, nullable=False)
 
+    # A snippet.
     a_prefix = Column(String, nullable=False)
-
     a_snippet = Column(String, nullable=False)
-
     a_suffix = Column(String, nullable=False)
 
+    # B snippet.
     b_prefix = Column(String, nullable=False)
-
     b_snippet = Column(String, nullable=False)
-
     b_suffix = Column(String, nullable=False)
 
     @classmethod
