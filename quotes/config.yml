@@ -2,8 +2,10 @@
 
 database: null
 
+stacks_database: null
+
 stacks_dirs: []
 
-text_paths: {}
+chadh_corpus: null
 
 result_dir: null

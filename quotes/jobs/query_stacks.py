@@ -5,32 +5,24 @@ import pickle
 import uuid
 
 from quotes.utils import scan_paths
-from quotes.text import RawText, StacksText
+from quotes.text import Text
 
 from .scatter import Scatter
 
 
 class QueryStacks(Scatter):
 
-    def __init__(
-        self,
-        corpus_dirs,
-        result_dir: str,
-        text_slug: str,
-        text_path: str,
-    ):
+    def __init__(self, chadh_corpus: str, chadh_slug: str, stacks_db: str):
 
         """
         Set the input paths.
         """
 
-        self.corpus_dirs = corpus_dirs
+        path = os.path.join(chadh_corpus, '{}.txt'.format(chadh_slug))
 
-        self.result_dir = result_dir
+        self.text = Text.from_chadh_c19(path)
 
-        self.text_slug = text_slug
-
-        self.text = RawText.from_file(text_path)
+        # TODO: stacks db
 
         self.matches = []
 
@@ -39,6 +31,8 @@ class QueryStacks(Scatter):
         """
         Generate corpus paths.
         """
+
+        # TODO: Query pub date + 10.
 
         for cdir in self.corpus_dirs:
             yield from scan_paths(cdir, '\.bz2')
@@ -49,23 +43,23 @@ class QueryStacks(Scatter):
         Hydrate a text from the corpus, align with the query.
         """
 
-        text = StacksText.from_file(path)
+        stacks_text = Text.from_stacks(path)
 
-        matches = self.text.match(text)
+        matches = self.text.match(stacks_text)
 
         for m in matches:
 
             a_prefix, a_snippet, a_suffix = self.text.snippet(m.a, m.size)
-            b_prefix, b_snippet, b_suffix = text.snippet(m.b, m.size)
+            b_prefix, b_snippet, b_suffix = stacks_text.snippet(m.b, m.size)
 
             self.matches.append(dict(
 
-                a_slug=self.text_slug,
+                a_slug=self.text.metadata['slug'],
 
-                b_corpus=text.metadata['corpus'],
-                b_identifier=text.metadata['identifier'],
-                b_title=text.metadata['title'],
-                b_author=text.metadata['author_full'],
+                b_corpus=stacks_text.metadata['corpus'],
+                b_identifier=stacks_text.metadata['identifier'],
+                b_title=stacks_text.metadata['title'],
+                b_author=stacks_text.metadata['author_full'],
 
                 a_start=m.a,
                 b_start=m.b,
@@ -74,6 +68,7 @@ class QueryStacks(Scatter):
                 a_prefix=a_prefix,
                 a_snippet=a_snippet,
                 a_suffix=a_suffix,
+
                 b_prefix=b_prefix,
                 b_snippet=b_snippet,
                 b_suffix=b_suffix,
