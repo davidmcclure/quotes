@@ -1,12 +1,15 @@
 
 
 from sqlalchemy import Column, Integer, String
+
+from quotes.utils import scan_paths
+
 from .base import Base
 
 
-class BPOText(Base):
+class BPOArticle(Base):
 
-    __tablename__ = 'bpo_text'
+    __tablename__ = 'bpo_article'
 
     record_id = Column(Integer, primary_key=True, autoincrement=False)
 
@@ -37,3 +40,12 @@ class BPOText(Base):
     language_code = Column(String)
 
     full_text = Column(String)
+
+    def ingest(cls, corpus_path: str):
+
+        """
+        Ingest BPO articles.
+        """
+
+        for path in scan_paths(corpus_path, '\.xml'):
+            print(path)

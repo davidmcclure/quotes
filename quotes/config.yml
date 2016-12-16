@@ -4,6 +4,8 @@ database: null
 
 chadh_corpus_dir: null
 
+bpo_corpus_dir: null
+
 stacks_db_url: null
 
 result_dir: null
