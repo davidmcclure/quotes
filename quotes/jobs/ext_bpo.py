@@ -1,7 +1,6 @@
 
 
 import os
-import uuid
 import ujson
 
 from quotes.utils import scan_paths

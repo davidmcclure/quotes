@@ -45,13 +45,13 @@ class BPOArticle(Base):
     full_text = Column(String)
 
     @classmethod
-    def ingest(cls, corpus_path: str, n: int=1000):
+    def ingest(cls, result_dir: str, n: int=1000):
 
         """
         Ingest BPO articles.
         """
 
-        paths = scan_paths(corpus_path, '\.json')
+        paths = scan_paths(result_dir, '\.json')
 
         groups = grouper(paths, n)
 
