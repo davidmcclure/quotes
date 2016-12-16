@@ -5,4 +5,4 @@ from quotes.models import Match
 
 
 if __name__ == '__main__':
-    Match.gather(config['result_dir'])
+    Match.gather(config['match_result_dir'])

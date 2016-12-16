@@ -93,6 +93,8 @@ class QueryStacks(Scatter):
         Flush matches to disk.
         """
 
+        # TODO: Use ujson.
+
         path = os.path.join(self.result_dir, str(uuid.uuid4()))
 
         with open(path, 'wb') as fh:
