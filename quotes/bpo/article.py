@@ -29,6 +29,15 @@ class Article:
     def publication_qualifier(self) -> str:
         return self.xpath('Publication/Qualifier/text()')[0]
 
+    def year(self) -> int:
+        return int(self.xpath('NumericPubDate')[0][:4])
+
+    def source_type(self) -> str:
+        return self.xpath('SourceType')[0]
+
+    def object_type(self) -> str:
+        return self.xpath('ObjectType')[0]
+
     def contributor_role(self) -> str:
         return self.xpath('Contributor/ContribRole/text()')[0]
 
