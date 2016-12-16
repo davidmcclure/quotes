@@ -2,7 +2,7 @@
 
 import os
 import uuid
-import json
+import ujson
 
 from quotes.utils import scan_paths
 from quotes.bpo import Article
@@ -56,7 +56,10 @@ class ExtBPO(Scatter):
             full_text=article.full_text(),
         )
 
-        path = os.path.join(self.result_dir, str(uuid.uuid4()))
+        path = os.path.join(
+            self.result_dir,
+            '{}.json'.format(row['record_id']),
+        )
 
         with open(path, 'w') as fh:
-            json.dump(row, fh)
+            ujson.dump(row, fh)
