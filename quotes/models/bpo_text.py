@@ -4,9 +4,9 @@ from sqlalchemy import Column, Integer, String
 from .base import Base
 
 
-class BPO(Base):
+class BPOText(Base):
 
-    __tablename__ = 'bpo'
+    __tablename__ = 'bpo_text'
 
     record_id = Column(Integer, primary_key=True, autoincrement=False)
 
