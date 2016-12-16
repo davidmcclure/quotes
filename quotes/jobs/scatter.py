@@ -15,7 +15,7 @@ class Scatter:
         raise NotImplementedError
 
     def flush(self):
-        raise NotImplementedError
+        pass
 
     def __call__(self):
 
