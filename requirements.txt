@@ -16,3 +16,4 @@ invoke
 matplotlib
 flake8
 dataset
+lxml
