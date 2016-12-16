@@ -5,7 +5,7 @@ import pickle
 from sqlalchemy import Column, Integer, String, PrimaryKeyConstraint
 from scandir import scandir
 
-from quotes.singletons import session
+from quotes.services import session
 
 from .base import Base
 

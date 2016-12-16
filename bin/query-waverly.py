@@ -1,6 +1,6 @@
 
 
-from quotes.singletons import config
+from quotes.services import config
 from quotes.jobs.query_stacks import QueryStacks
 
 

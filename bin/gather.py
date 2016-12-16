@@ -1,6 +1,6 @@
 
 
-from quotes.singletons import config
+from quotes.services import config
 from quotes.models import Match
 
 

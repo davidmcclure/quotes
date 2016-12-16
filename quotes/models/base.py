@@ -2,7 +2,7 @@
 
 from sqlalchemy.ext.declarative import declarative_base
 
-from quotes.singletons import session
+from quotes.services import session
 
 
 class Base:
