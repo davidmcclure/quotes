@@ -2,6 +2,7 @@
 
 from sqlalchemy import Column, Integer, String
 
+from quotes.bpo import Article
 from quotes.utils import scan_paths
 
 from .base import Base
@@ -49,4 +50,5 @@ class BPOArticle(Base):
         """
 
         for path in scan_paths(corpus_path, '\.xml'):
+            article = Article(path)
             print(path)
