@@ -41,6 +41,7 @@ class BPOArticle(Base):
 
     full_text = Column(String)
 
+    @classmethod
     def ingest(cls, corpus_path: str):
 
         """
