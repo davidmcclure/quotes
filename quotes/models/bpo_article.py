@@ -1,9 +1,11 @@
 
 
+import ujson
+
 from sqlalchemy import Column, Integer, String
 
-from quotes.bpo import Article
-from quotes.utils import scan_paths
+from quotes.services import session
+from quotes.utils import scan_paths, grouper
 
 from .base import Base
 
@@ -43,12 +45,21 @@ class BPOArticle(Base):
     full_text = Column(String)
 
     @classmethod
-    def ingest(cls, corpus_path: str):
+    def ingest(cls, corpus_path: str, n: int=1000):
 
         """
         Ingest BPO articles.
         """
 
-        for path in scan_paths(corpus_path, '\.xml'):
-            article = Article(path)
-            print(path)
+        paths = scan_paths(corpus_path, '\.json')
+
+        groups = grouper(paths, n)
+
+        for i, group in enumerate(groups):
+
+            mappings = [ujson.load(open(path)) for path in group]
+
+            session.bulk_insert_mappings(cls, mappings)
+            print((i+1)*n)
+
+        session.commit()

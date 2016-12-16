@@ -5,6 +5,8 @@ import scandir
 import os
 import psutil
 
+from itertools import islice, chain
+
 
 def clean_text(text: str) -> str:
 
@@ -44,3 +46,23 @@ def mem_pct():
     mem = psutil.virtual_memory()
 
     return mem.percent
+
+
+def grouper(iterable, size):
+
+    """
+    Yield "groups" from an iterable.
+
+    Args:
+        iterable (iter): The iterable.
+        size (int): The number of elements in each group.
+
+    Yields:
+        The next group.
+    """
+
+    source = iter(iterable)
+
+    while True:
+        group = islice(source, size)
+        yield chain([next(group)], group)
