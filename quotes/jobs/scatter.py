@@ -1,7 +1,9 @@
 
 
 import numpy as np
-import json
+import ujson
+
+from datetime import datetime as dt
 
 from quotes.utils import mem_pct
 
@@ -37,13 +39,13 @@ class Scatter:
         if rank == 0:
 
             segments = [
-                json.dumps(list(s))
+                ujson.dumps(list(s))
                 for s in np.array_split(list(self.args()), size)
             ]
 
         segment = comm.scatter(segments, root=0)
 
-        args = json.loads(segment)
+        args = ujson.loads(segment)
 
         print(rank, len(args))
 
@@ -62,7 +64,7 @@ class Scatter:
             except Exception as e:
                 print(e)
 
-            if i % 100 == 0:
-                print(rank, i, mem_pct())
+            # if i % 100 == 0:
+            print(dt.now().isoformat(), rank, i, mem_pct())
 
         self.flush()
