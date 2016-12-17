@@ -2,7 +2,14 @@
 
 import pickle
 
-from sqlalchemy import Column, Integer, String, PrimaryKeyConstraint
+from sqlalchemy import (
+    Column,
+    Integer,
+    String,
+    PrimaryKeyConstraint,
+    ForeignKey,
+)
+
 from scandir import scandir
 
 from quotes.services import session
@@ -16,23 +23,16 @@ class Match(Base):
 
     __table_args__ = (
         PrimaryKeyConstraint(
-            'a_slug',
-            'b_corpus',
-            'b_identifier',
+            'chadh_slug',
+            'bpo_record_id',
             'a_start',
             'b_start',
         ),
     )
 
-    a_slug = Column(String, nullable=False)
+    chadh_slug = Column(String, nullable=False)
 
-    # B metadata.
-    b_corpus = Column(String, nullable=False)
-    b_identifier = Column(String, nullable=False)
-    b_title = Column(String, nullable=True)
-    b_author = Column(String, nullable=True)
-
-    # article type, journal name
+    bpo_record_id = Column(Integer, ForeignKey('bpo_article.record_id'))
 
     # Match.
     a_start = Column(Integer, nullable=False)

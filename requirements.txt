@@ -1,6 +1,8 @@
 
 ipython
 boltons
+pytest
+pytest-env
 spooky
 sqlalchemy
 jupyter

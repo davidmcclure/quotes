@@ -66,12 +66,8 @@ class QueryStacks(Scatter):
 
                 self.matches.append(dict(
 
-                    a_slug=novel.metadata['slug'],
-
-                    b_corpus=bpo_text.metadata['corpus'],
-                    b_identifier=bpo_text.metadata['identifier'],
-                    b_title=bpo_text.metadata['title'],
-                    b_author=bpo_text.metadata['author_full'],
+                    chadh_slug=novel.metadata['slug'],
+                    bpo_record_id=article.record_id,
 
                     a_start=m.a,
                     b_start=m.b,

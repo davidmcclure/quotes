@@ -2,6 +2,7 @@
 
 import os
 import anyconfig
+import yaml
 
 from sqlalchemy import create_engine, event
 from sqlalchemy.orm import sessionmaker, scoped_session
@@ -9,6 +10,8 @@ from sqlalchemy.engine.url import URL
 
 
 class Config(dict):
+
+    TMP_YAML = '/tmp/.quotes.yml'
 
     @classmethod
     def from_env(cls):
@@ -24,6 +27,13 @@ class Config(dict):
             os.path.join(os.path.dirname(__file__), 'config.yml'),
             os.path.join(root, 'quotes.yml'),
         ]
+
+        # Patch in the testing config.
+        if os.environ.get('QUOTES_ENV') == 'test':
+            paths.append(os.path.join(root, 'quotes.test.yml'))
+
+        # MPI overrides.
+        paths.append(cls.TMP_YAML)
 
         return cls(paths)
 
@@ -96,3 +106,20 @@ class Config(dict):
         """
 
         return scoped_session(self.build_sqla_sessionmaker())
+
+    def write_tmp(self):
+
+        """
+        Write the config into the /tmp file.
+        """
+
+        with open(self.TMP_YAML, 'w') as fh:
+            fh.write(yaml.dump(self))
+
+    def clear_tmp(self):
+
+        """
+        Clear the /tmp file.
+        """
+
+        os.remove(self.TMP_YAML)
