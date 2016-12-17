@@ -24,7 +24,6 @@ class Match(Base):
         ),
     )
 
-    # TODO: Store corpus+identifier.
     a_slug = Column(String, nullable=False)
 
     # B metadata.
@@ -32,6 +31,8 @@ class Match(Base):
     b_identifier = Column(String, nullable=False)
     b_title = Column(String, nullable=True)
     b_author = Column(String, nullable=True)
+
+    # article type, journal name
 
     # Match.
     a_start = Column(Integer, nullable=False)
