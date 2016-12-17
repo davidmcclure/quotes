@@ -32,7 +32,9 @@ class UnzipBPO(Scatter):
         Unzip the archive into a new directory.
         """
 
-        xml_dir = os.path.splitext(os.path.basename(path))[0]
+        slug = os.path.splitext(os.path.basename(path))[0]
+
+        xml_dir = os.path.join(self.corpus_dir, slug)
 
         with zipfile.ZipFile(path) as fh:
             fh.extractall(xml_dir)
