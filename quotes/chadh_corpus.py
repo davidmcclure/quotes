@@ -28,8 +28,8 @@ class ChadhCorpus:
     def slug_year_pairs(self, n=10):
 
         """
-        Generate a list of (slug, year) for the N years after the publication
-        of each book.
+        Generate a list of (slug, year) pairs for the N years after the
+        publication of each book.
         """
 
         for slug in self.slugs():
@@ -37,4 +37,4 @@ class ChadhCorpus:
             pub_year = int(re.search('[0-9]{4}', slug).group())
 
             for year in range(pub_year, pub_year+n+1):
-                yield (slug, year)
+                yield dict(slug=slug, year=year)
