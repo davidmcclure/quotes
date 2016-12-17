@@ -1,6 +1,7 @@
 
 
 import os
+import zipfile
 
 from quotes.utils import scan_paths
 
@@ -23,7 +24,7 @@ class UnzipBPO(Scatter):
         Generate BPO archive paths.
         """
 
-        pass
+        yield from scan_paths(self.corpus_dir, '\.zip')
 
     def process(self, path: str):
 
@@ -31,4 +32,7 @@ class UnzipBPO(Scatter):
         Unzip the archive into a new directory.
         """
 
-        pass
+        xml_dir = os.path.splitext(os.path.basename(path))[0]
+
+        with zipfile.ZipFile(path) as fh:
+            fh.extractall(xml_dir)
