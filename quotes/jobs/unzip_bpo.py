@@ -34,7 +34,7 @@ class UnzipBPO(Scatter):
 
         slug = os.path.splitext(os.path.basename(path))[0]
 
-        xml_dir = os.path.join(self.corpus_dir, slug)
+        xml_dir = os.path.join(os.path.dirname(path), slug)
 
         with zipfile.ZipFile(path) as fh:
             fh.extractall(xml_dir)
