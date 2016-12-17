@@ -9,7 +9,7 @@ from quotes.models import BPOArticle
 from .scatter import Scatter
 
 
-class QueryStacks(Scatter):
+class ExtAlignments(Scatter):
 
     def __init__(self, corpus_dir: str, result_dir: str):
 
