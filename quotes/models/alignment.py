@@ -17,9 +17,9 @@ from quotes.services import session
 from .base import Base
 
 
-class Match(Base):
+class Alignment(Base):
 
-    __tablename__ = 'match'
+    __tablename__ = 'alignment'
 
     __table_args__ = (
         PrimaryKeyConstraint(
@@ -53,7 +53,7 @@ class Match(Base):
     def gather(cls, result_dir: str):
 
         """
-        Bulk-insert matches.
+        Bulk-insert alignments.
         """
 
         # Gather pickle paths.

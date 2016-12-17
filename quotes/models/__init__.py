@@ -4,4 +4,4 @@
 from .base import Base
 from .bpo_article import BPOArticle
 from .chadh_novel import ChadhNovel
-from .match import Match
+from .alignment import Alignment
