@@ -82,3 +82,5 @@ class QueryStacks(Scatter):
                     b_suffix=b_suffix,
 
                 ))
+
+        # TODO: flush matches when >1k
