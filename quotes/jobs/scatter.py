@@ -58,6 +58,9 @@ class Scatter:
                 if type(arg) is dict:
                     self.process(**arg)
 
+                elif type(arg) is tuple:
+                    self.process(*arg)
+
                 else:
                     self.process(arg)
 
