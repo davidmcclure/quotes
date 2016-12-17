@@ -1,34 +1,23 @@
 
 
 import os
-import pickle
-import uuid
-import dataset
 
 from quotes.text import Text
+from quotes.chadh_corpus import ChadhCorpus
+from quotes.models import BPOArticle
 
 from .scatter import Scatter
 
 
 class QueryStacks(Scatter):
 
-    def __init__(self,
-                 chadh_corpus_dir: str,
-                 chadh_slug: str,
-                 stacks_db_url: str,
-                 result_dir: str):
+    def __init__(self, corpus_dir: str, result_dir: str):
 
         """
         Set the input paths.
         """
 
-        fname = '{}.txt'.format(chadh_slug)
-
-        path = os.path.join(chadh_corpus_dir, fname)
-
-        self.text = Text.from_chadh_c19(path)
-
-        self.stacks_db = dataset.connect(stacks_db_url)
+        self.corpus_dir = corpus_dir
 
         self.result_dir = result_dir
 
@@ -40,62 +29,60 @@ class QueryStacks(Scatter):
         Generate corpus paths.
         """
 
-        pub_year = self.text.metadata['year']
+        corpus = ChadhCorpus(self.corpus_dir)
 
-        query = '''
-        SELECT path FROM text
-        WHERE corpus = "bpo" and year >= {} and year <= {}
-        '''.format(pub_year, pub_year+10)
+        return corpus.slug_year_pairs()
 
-        return [r['path'] for r in self.stacks_db.query(query)]
-
-    def process(self, path: str):
+    def process(self, slug: str, year: int):
 
         """
-        Hydrate a text from the corpus, align with the query.
+        Query BPO texts in a given year against a novel.
         """
 
-        stacks_text = Text.from_stacks(path)
+        # Read the Chadwyck novel.
 
-        matches = self.text.match(stacks_text)
+        fname = '{}.txt'.format(slug)
 
-        for m in matches:
+        novel_path = os.path.join(self.corpus_dir, fname)
 
-            a_prefix, a_snippet, a_suffix = self.text.snippet(m.a, m.size)
-            b_prefix, b_snippet, b_suffix = stacks_text.snippet(m.b, m.size)
+        novel = Text.from_chadh_c19(novel_path)
 
-            self.matches.append(dict(
+        # Query BPO articles in the year.
 
-                a_slug=self.text.metadata['slug'],
+        articles = BPOArticle.query.filter_by(year=year)
 
-                b_corpus=stacks_text.metadata['corpus'],
-                b_identifier=stacks_text.metadata['identifier'],
-                b_title=stacks_text.metadata['title'],
-                b_author=stacks_text.metadata['author_full'],
+        for article in articles:
 
-                a_start=m.a,
-                b_start=m.b,
-                size=m.size,
+            bpo_text = Text(article.full_text)
 
-                a_prefix=a_prefix,
-                a_snippet=a_snippet,
-                a_suffix=a_suffix,
+            # Align article -> novel.
+            matches = novel.match(bpo_text)
 
-                b_prefix=b_prefix,
-                b_snippet=b_snippet,
-                b_suffix=b_suffix,
+            # Record matches.
+            for m in matches:
 
-            ))
+                a_prefix, a_snippet, a_suffix = novel.snippet(m.a, m.size)
+                b_prefix, b_snippet, b_suffix = bpo_text.snippet(m.b, m.size)
 
-    def flush(self):
+                self.matches.append(dict(
 
-        """
-        Flush matches to disk.
-        """
+                    a_slug=novel.metadata['slug'],
 
-        # TODO: Use ujson.
+                    b_corpus=bpo_text.metadata['corpus'],
+                    b_identifier=bpo_text.metadata['identifier'],
+                    b_title=bpo_text.metadata['title'],
+                    b_author=bpo_text.metadata['author_full'],
 
-        path = os.path.join(self.result_dir, str(uuid.uuid4()))
+                    a_start=m.a,
+                    b_start=m.b,
+                    size=m.size,
 
-        with open(path, 'wb') as fh:
-            pickle.dump(self.matches, fh)
+                    a_prefix=a_prefix,
+                    a_snippet=a_snippet,
+                    a_suffix=a_suffix,
+
+                    b_prefix=b_prefix,
+                    b_snippet=b_snippet,
+                    b_suffix=b_suffix,
+
+                ))
