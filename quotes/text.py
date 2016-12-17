@@ -106,7 +106,8 @@ class Text:
         """
 
         # padding start
-        char1 = self.tokens[start-padding].char1
+        t2 = max(start-padding, 0)
+        char1 = self.tokens[t2].char1
 
         # snippet start
         char2 = self.tokens[start].char1
@@ -115,8 +116,8 @@ class Text:
         char3 = self.tokens[start+size-1].char2
 
         # padding end
-        end = min(start+size-1+padding, len(self.tokens)-1)
-        char4 = self.tokens[end].char2
+        t2 = min(start+size-1+padding, len(self.tokens)-1)
+        char4 = self.tokens[t2].char2
 
         return map(clean_text, [
             self.text[char1:char2],

@@ -14,10 +14,10 @@ def test_alignment_pairs():
     pairs = list(ChadhNovel.alignment_pairs())
 
     for year in range(1910, 1921):
-        assert (n1.id, year) in pairs
+        assert dict(novel_id=n1.id, year=year) in pairs
 
     for year in range(1920, 1931):
-        assert (n2.id, year) in pairs
+        assert dict(novel_id=n2.id, year=year) in pairs
 
     for year in range(1930, 1941):
-        assert (n3.id, year) in pairs
+        assert dict(novel_id=n3.id, year=year) in pairs

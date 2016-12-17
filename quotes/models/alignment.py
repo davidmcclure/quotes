@@ -1,6 +1,6 @@
 
 
-import pickle
+import ujson
 
 from sqlalchemy import (
     Column,
@@ -67,7 +67,7 @@ class Alignment(Base):
         for i, path in enumerate(paths):
             with open(path, 'rb') as fh:
 
-                mappings = pickle.load(fh)
+                mappings = ujson.load(fh)
 
                 # Bulk-insert the rows.
                 session.bulk_insert_mappings(cls, mappings)

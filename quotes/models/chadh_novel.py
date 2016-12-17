@@ -52,4 +52,4 @@ class ChadhNovel(Base):
 
         for novel in cls.query.all():
             for year in range(novel.year, novel.year+years+1):
-                yield (novel.id, year)
+                yield dict(novel_id=novel.id, year=year)

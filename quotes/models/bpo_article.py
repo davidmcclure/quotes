@@ -42,7 +42,7 @@ class BPOArticle(Base):
 
     language_code = Column(String)
 
-    full_text = Column(String)
+    text = Column(String)
 
     @classmethod
     def ingest(cls, result_dir: str, n: int=1000):
