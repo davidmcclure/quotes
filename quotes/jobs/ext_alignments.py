@@ -3,21 +3,18 @@
 import os
 
 from quotes.text import Text
-from quotes.chadh_corpus import ChadhCorpus
-from quotes.models import BPOArticle
+from quotes.models import ChadhNovel, BPOArticle
 
 from .scatter import Scatter
 
 
 class ExtAlignments(Scatter):
 
-    def __init__(self, corpus_dir: str, result_dir: str):
+    def __init__(self, result_dir: str):
 
         """
         Set the input paths.
         """
-
-        self.corpus_dir = corpus_dir
 
         self.result_dir = result_dir
 
@@ -26,14 +23,12 @@ class ExtAlignments(Scatter):
     def args(self):
 
         """
-        Generate corpus paths.
+        Generate (novel id, year) pairs.
         """
 
-        corpus = ChadhCorpus(self.corpus_dir)
+        return []
 
-        return corpus.slug_year_pairs()
-
-    def process(self, slug: str, year: int):
+    def process(self, novel_id: str, year: int):
 
         """
         Query BPO texts in a given year against a novel.
