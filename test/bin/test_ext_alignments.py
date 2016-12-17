@@ -26,16 +26,6 @@ def test_ext_alignments():
     a3 = BPOArticleFactory()
     a4 = BPOArticleFactory()
 
-    session.add(n1)
-    session.add(n2)
-
-    session.add(a1)
-    session.add(a2)
-    session.add(a3)
-    session.add(a4)
-
-    session.commit()
-
     call(['mpirun', 'bin/ext-alignments.py'])
     call(['bin/gather-alignments.py'])
 

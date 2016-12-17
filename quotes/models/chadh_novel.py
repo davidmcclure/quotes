@@ -41,3 +41,15 @@ class ChadhNovel(Base):
                 session.add(novel)
 
         session.commit()
+
+    @classmethod
+    def alignment_pairs(cls, years=10):
+
+        """
+        For each novel, generate (novel id, year) pairs for the N years after
+        the publication of each novel.
+        """
+
+        for novel in cls.query.all():
+            for year in range(novel.year, novel.year+years+1):
+                yield (novel.id, year)
