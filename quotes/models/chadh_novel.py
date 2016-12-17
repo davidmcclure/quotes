@@ -11,8 +11,10 @@ class ChadhNovel(Base):
 
     __tablename__ = 'chadh_novel'
 
-    slug = Column(String, primary_key=True, autoincrement=False)
+    id = Column(Integer, primary_key=True)
 
-    year = Column(Integer)
+    slug = Column(String, unique=True, nullable=False)
 
-    full_text = Column(String)
+    year = Column(Integer, nullable=False)
+
+    full_text = Column(String, nullable=False)

@@ -23,28 +23,28 @@ class Match(Base):
 
     __table_args__ = (
         PrimaryKeyConstraint(
-            'chadh_slug',
-            'bpo_record_id',
+            'a_id',
+            'b_id',
             'a_start',
             'b_start',
         ),
     )
 
-    chadh_slug = Column(String, nullable=False)
+    # Texts
+    a_id = Column(Integer, ForeignKey('chadh_novel.id'))
+    b_id = Column(Integer, ForeignKey('bpo_article.record_id'))
 
-    bpo_record_id = Column(Integer, ForeignKey('bpo_article.record_id'))
-
-    # Match.
+    # Match
     a_start = Column(Integer, nullable=False)
     b_start = Column(Integer, nullable=False)
     size = Column(Integer, nullable=False)
 
-    # A snippet.
+    # A snippet
     a_prefix = Column(String, nullable=False)
     a_snippet = Column(String, nullable=False)
     a_suffix = Column(String, nullable=False)
 
-    # B snippet.
+    # B snippet
     b_prefix = Column(String, nullable=False)
     b_snippet = Column(String, nullable=False)
     b_suffix = Column(String, nullable=False)
