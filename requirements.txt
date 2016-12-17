@@ -3,6 +3,7 @@ ipython
 boltons
 pytest
 pytest-env
+factory_boy
 spooky
 sqlalchemy
 jupyter
