@@ -45,7 +45,7 @@ class ExtAlignments(Scatter):
 
         for article in articles:
 
-            b = Text(article.full_text)
+            b = Text(article.text)
 
             # Align article -> novel.
             matches = a.match(b)

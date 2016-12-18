@@ -69,5 +69,5 @@ class Article:
     def language_code(self) -> str:
         return self.first('LanguageCode/text()')
 
-    def full_text(self) -> str:
+    def text(self) -> str:
         return self.first('FullText/text()')

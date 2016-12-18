@@ -22,11 +22,11 @@ def test_ext_alignments():
     n1 = ChadhNovelFactory(text='aaa bbb ccc')
     n2 = ChadhNovelFactory(text='ddd eee fff')
 
-    a1 = BPOArticleFactory(full_text='aaa bbb ccc')
-    a2 = BPOArticleFactory(full_text='aaa bbb ccc')
+    a1 = BPOArticleFactory(text='aaa bbb ccc')
+    a2 = BPOArticleFactory(text='aaa bbb ccc')
 
-    a3 = BPOArticleFactory(full_text='ddd eee fff')
-    a4 = BPOArticleFactory(full_text='ddd eee fff')
+    a3 = BPOArticleFactory(text='ddd eee fff')
+    a4 = BPOArticleFactory(text='ddd eee fff')
 
     session.commit()
 
@@ -57,8 +57,8 @@ def test_year_range():
 
     n1 = ChadhNovelFactory(text='aaa bbb ccc', year=1900)
 
-    a1 = BPOArticleFactory(full_text='aaa bbb ccc', year=1905)
-    a2 = BPOArticleFactory(full_text='aaa bbb ccc', year=1915)
+    a1 = BPOArticleFactory(text='aaa bbb ccc', year=1905)
+    a2 = BPOArticleFactory(text='aaa bbb ccc', year=1915)
 
     session.commit()
 
@@ -88,8 +88,8 @@ def test_multiple_matches():
 
     n1 = ChadhNovelFactory(text='aaa bbb ccc ddd eee fff')
 
-    a1 = BPOArticleFactory(full_text='aaa bbb ccc')
-    a2 = BPOArticleFactory(full_text='ddd eee fff')
+    a1 = BPOArticleFactory(text='aaa bbb ccc')
+    a2 = BPOArticleFactory(text='ddd eee fff')
 
     session.commit()
 
@@ -126,7 +126,7 @@ def test_flush_matches():
     ChadhNovelFactory(text='aaa bbb ccc')
 
     for i in range(3000):
-        BPOArticleFactory(full_text='aaa bbb ccc')
+        BPOArticleFactory(text='aaa bbb ccc')
 
     session.commit()
 

@@ -52,7 +52,7 @@ class ExtBPO(Scatter):
             contributor_person_name=article.contributor_person_name(),
             contributor_original_form=article.contributor_original_form(),
             language_code=article.language_code(),
-            full_text=article.full_text(),
+            text=article.text(),
         )
 
         path = os.path.join(
