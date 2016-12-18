@@ -59,7 +59,7 @@ class ExtBPO(Scatter):
         ))
 
         # Flush results when >1k.
-        if len(self.articles) > 10000:
+        if len(self.articles) > 1000:
             self.flush()
 
     def flush(self):
