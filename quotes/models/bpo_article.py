@@ -2,6 +2,7 @@
 
 import ujson
 
+from datetime import datetime as dt
 from sqlalchemy import Column, Integer, String
 
 from quotes.services import session
@@ -60,6 +61,6 @@ class BPOArticle(Base):
             mappings = [ujson.load(open(path)) for path in group]
 
             session.bulk_insert_mappings(cls, mappings)
-            print((i+1)*n)
+            print(dt.now().isoformat(), (i+1)*n)
 
         session.commit()
