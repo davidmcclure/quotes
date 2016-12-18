@@ -53,16 +53,16 @@ class Scatter:
 
         for i, arg in enumerate(args):
 
-            # try:
+            try:
 
-            if type(arg) is dict:
-                self.process(**arg)
+                if type(arg) is dict:
+                    self.process(**arg)
 
-            else:
-                self.process(arg)
+                else:
+                    self.process(arg)
 
-            # except Exception as e:
-                # print(e)
+            except Exception as e:
+                print(e)
 
             # if i % 100 == 0:
             print(dt.now().isoformat(), rank, i, mem_pct())
