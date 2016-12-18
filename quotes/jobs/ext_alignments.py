@@ -75,6 +75,10 @@ class ExtAlignments(Scatter):
 
                 ))
 
+        # Flush results when >1k.
+        if len(self.matches) > 1000:
+            self.flush()
+
     def flush(self):
 
         """

@@ -115,3 +115,22 @@ def test_multiple_matches():
     assert match2.a_start == 3
     assert match2.b_start == 0
     assert match2.size == 3
+
+
+def test_flush_matches():
+
+    """
+    Matches should be flushed when the buffer goes over 1k.
+    """
+
+    ChadhNovelFactory(text='aaa bbb ccc')
+
+    for i in range(3000):
+        BPOArticleFactory(text='aaa bbb ccc')
+
+    session.commit()
+
+    call(['mpirun', 'bin/ext-alignments.py'])
+    call(['bin/gather-alignments.py'])
+
+    assert Alignment.query.count() == 3000
