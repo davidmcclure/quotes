@@ -18,4 +18,4 @@ class BPOArticleFactory(factory.alchemy.SQLAlchemyModelFactory):
 
     year = 1900
 
-    text = 'text'
+    full_text = 'text'

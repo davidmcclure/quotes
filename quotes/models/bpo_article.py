@@ -43,7 +43,7 @@ class BPOArticle(Base):
 
     language_code = Column(String)
 
-    text = Column(String)
+    full_text = Column(String)
 
     @classmethod
     def ingest(cls, result_dir: str, n: int=1000):
@@ -58,9 +58,12 @@ class BPOArticle(Base):
 
         for i, group in enumerate(groups):
 
-            mappings = [ujson.load(open(path)) for path in group]
+            mappings = []
+            for path in group:
+                with open(path) as fh:
+                    mappings.append(ujson.load(fh))
 
             session.bulk_insert_mappings(cls, mappings)
             print(dt.now().isoformat(), (i+1)*n)
 
-        session.commit()
+            session.commit()
