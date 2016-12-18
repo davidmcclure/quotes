@@ -33,15 +33,46 @@ def test_ext_alignments():
     call(['mpirun', 'bin/ext-alignments.py'])
     call(['bin/gather-alignments.py'])
 
-    for novel, article in [
-        (n1, a1),
-        (n1, a2),
-        (n2, a3),
-        (n2, a4),
+    # TODO: Test snippets?
+
+    for a_id, b_id in [
+        (n1.id, a1.record_id),
+        (n1.id, a2.record_id),
+        (n2.id, a3.record_id),
+        (n2.id, a4.record_id),
     ]:
 
         assert (
             Alignment.query
-            .filter_by(a_id=novel.id, b_id=article.record_id)
+            .filter_by(a_id=a_id, b_id=b_id)
             .one()
         )
+
+
+def test_year_range():
+
+    """
+    Just check the 10 years after publication.
+    """
+
+    n1 = ChadhNovelFactory(text='aaa bbb ccc', year=1900)
+
+    a1 = BPOArticleFactory(text='aaa bbb ccc', year=1905)
+    a2 = BPOArticleFactory(text='aaa bbb ccc', year=1915)
+
+    session.commit()
+
+    call(['mpirun', 'bin/ext-alignments.py'])
+    call(['bin/gather-alignments.py'])
+
+    assert (
+        Alignment.query
+        .filter_by(a_id=n1.id, b_id=a1.record_id)
+        .one()
+    )
+
+    assert not (
+        Alignment.query
+        .filter_by(a_id=n1.id, b_id=a2.record_id)
+        .first()
+    )
