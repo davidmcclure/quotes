@@ -54,7 +54,7 @@ class BPOArticle(Base):
 
         paths = scan_paths(result_dir, '\.json')
 
-        groups = grouper(paths, n)
+        groups = grouper(list(paths), n)
 
         for i, group in enumerate(groups):
 
