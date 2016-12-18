@@ -43,7 +43,7 @@ class BPOArticle(Base):
 
     language_code = Column(String)
 
-    path = Column(String)
+    full_text = Column(String)
 
     @classmethod
     def ingest(cls, result_dir: str, n: int=1000):
@@ -61,14 +61,7 @@ class BPOArticle(Base):
             mappings = []
             for path in group:
                 with open(path) as fh:
-
-                    mapping = ujson.load(fh)
-
-                    # Strip text, add path.
-                    mapping.pop('full_text')
-                    mapping['path'] = path
-
-                    mappings.append(mapping)
+                    mappings.append(ujson.load(fh))
 
             session.bulk_insert_mappings(cls, mappings)
             print(dt.now().isoformat(), (i+1)*n)
