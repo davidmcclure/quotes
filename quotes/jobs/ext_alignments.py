@@ -85,7 +85,10 @@ class ExtAlignments(Scatter):
         Flush the matches to disk, clear cache.
         """
 
-        path = os.path.join(self.result_dir, str(uuid.uuid4()))
+        path = os.path.join(
+            self.result_dir,
+            '{}.json'.format(str(uuid.uuid4())),
+        )
 
         with open(path, 'w') as fh:
             ujson.dump(self.matches, fh)

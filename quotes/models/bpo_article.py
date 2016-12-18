@@ -6,7 +6,7 @@ from datetime import datetime as dt
 from sqlalchemy import Column, Integer, String
 
 from quotes.services import session
-from quotes.utils import scan_paths, grouper
+from quotes.utils import scan_paths
 
 from .base import Base
 
@@ -54,10 +54,12 @@ class BPOArticle(Base):
 
         paths = scan_paths(result_dir, '\.json')
 
+        # Walk paths.
         for i, path in enumerate(paths):
-
             with open(path) as fh:
-                session.bulk_insert_mappings(cls, ujson.load(fh))
 
-            session.commit()
-            print(dt.now().isoformat(), i)
+                # Bulk-insert articles.
+                session.bulk_insert_mappings(cls, ujson.load(fh))
+                session.commit()
+
+                print(dt.now().isoformat(), i)

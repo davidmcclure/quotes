@@ -2,6 +2,8 @@
 
 import ujson
 
+from datetime import datetime as dt
+
 from sqlalchemy import (
     Column,
     Integer,
@@ -10,9 +12,8 @@ from sqlalchemy import (
     ForeignKey,
 )
 
-from scandir import scandir
-
 from quotes.services import session
+from quotes.utils import scan_paths
 
 from .base import Base
 
@@ -56,12 +57,7 @@ class Alignment(Base):
         Bulk-insert alignments.
         """
 
-        # Gather pickle paths.
-        paths = [
-            d.path
-            for d in scandir(result_dir)
-            if d.is_file()
-        ]
+        paths = scan_paths(result_dir, '\.json')
 
         # Walk paths.
         for i, path in enumerate(paths):
@@ -69,8 +65,8 @@ class Alignment(Base):
 
                 mappings = ujson.load(fh)
 
-                # Bulk-insert the rows.
+                # Bulk-insert matches.
                 session.bulk_insert_mappings(cls, mappings)
-                print(i)
+                session.commit()
 
-        session.commit()
+                print(dt.now().isoformat(), i)
