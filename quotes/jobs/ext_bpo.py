@@ -2,6 +2,7 @@
 
 import os
 import ujson
+import uuid
 
 from quotes.utils import scan_paths
 from quotes.bpo import Article
@@ -21,6 +22,8 @@ class ExtBPO(Scatter):
 
         self.result_dir = result_dir
 
+        self.articles = []
+
     def args(self):
 
         """
@@ -37,7 +40,7 @@ class ExtBPO(Scatter):
 
         article = Article(path)
 
-        row = dict(
+        self.articles.append(dict(
             record_id=article.record_id(),
             record_title=article.record_title(),
             publication_id=article.publication_id(),
@@ -53,12 +56,24 @@ class ExtBPO(Scatter):
             contributor_original_form=article.contributor_original_form(),
             language_code=article.language_code(),
             text=article.text(),
-        )
+        ))
+
+        # Flush results when >1k.
+        if len(self.articles) > 1000:
+            self.flush()
+
+    def flush(self):
+
+        """
+        Flush the matches to disk, clear cache.
+        """
 
         path = os.path.join(
             self.result_dir,
-            '{}.json'.format(row['record_id']),
+            '{}.json'.format(str(uuid.uuid4())),
         )
 
         with open(path, 'w') as fh:
-            ujson.dump(row, fh)
+            ujson.dump(self.articles, fh)
+
+        self.articles.clear()

@@ -46,7 +46,7 @@ class BPOArticle(Base):
     text = Column(String)
 
     @classmethod
-    def ingest(cls, result_dir: str, n: int=1000):
+    def ingest(cls, result_dir: str):
 
         """
         Ingest BPO articles.
@@ -54,16 +54,10 @@ class BPOArticle(Base):
 
         paths = scan_paths(result_dir, '\.json')
 
-        groups = grouper(list(paths), n)
+        for i, path in enumerate(paths):
 
-        for i, group in enumerate(groups):
-
-            mappings = []
-            for path in group:
-                with open(path) as fh:
-                    mappings.append(ujson.load(fh))
-
-            session.bulk_insert_mappings(cls, mappings)
-            print(dt.now().isoformat(), (i+1)*n)
+            with open(path) as fh:
+                session.bulk_insert_mappings(cls, ujson.load(fh))
 
             session.commit()
+            print(dt.now().isoformat(), i)
