@@ -6,8 +6,6 @@ chadh_corpus_dir: null
 
 bpo_corpus_dir: null
 
-stacks_db_url: null
-
 alignment_result_dir: null
 
 bpo_result_dir: null
