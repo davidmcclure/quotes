@@ -64,7 +64,7 @@ class Scatter:
             except Exception as e:
                 print(e)
 
-            # if i % 1000 == 0:
-            print(dt.now().isoformat(), rank, i, mem_pct())
+            if i % 1000 == 0:
+                print(dt.now().isoformat(), rank, i, mem_pct())
 
         self.flush()
