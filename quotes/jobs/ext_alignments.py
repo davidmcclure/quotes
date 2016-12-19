@@ -48,38 +48,43 @@ class ExtAlignments(Scatter):
 
         for i, article in enumerate(articles):
 
-            b = Text(article.text)
+            try:
 
-            # Align article -> novel.
-            matches = a.match(b)
+                b = Text(article.text)
 
-            # Record matches.
-            for m in matches:
+                # Align article -> novel.
+                matches = a.match(b)
 
-                a_prefix, a_snippet, a_suffix = a.snippet(m.a, m.size)
-                b_prefix, b_snippet, b_suffix = b.snippet(m.b, m.size)
+                # Record matches.
+                for m in matches:
 
-                self.matches.append(dict(
+                    a_prefix, a_snippet, a_suffix = a.snippet(m.a, m.size)
+                    b_prefix, b_snippet, b_suffix = b.snippet(m.b, m.size)
 
-                    a_id=novel.id,
-                    b_id=article.record_id,
+                    self.matches.append(dict(
 
-                    a_start=m.a,
-                    b_start=m.b,
-                    size=m.size,
+                        a_id=novel.id,
+                        b_id=article.record_id,
 
-                    a_prefix=a_prefix,
-                    a_snippet=a_snippet,
-                    a_suffix=a_suffix,
+                        a_start=m.a,
+                        b_start=m.b,
+                        size=m.size,
 
-                    b_prefix=b_prefix,
-                    b_snippet=b_snippet,
-                    b_suffix=b_suffix,
+                        a_prefix=a_prefix,
+                        a_snippet=a_snippet,
+                        a_suffix=a_suffix,
 
-                ))
+                        b_prefix=b_prefix,
+                        b_snippet=b_snippet,
+                        b_suffix=b_suffix,
+
+                    ))
+
+            except Exception as e:
+                print(e)
 
             # TODO|dev
-            print(dt.now().isoformat(), i, mem_pct())
+            print('align', dt.now().isoformat(), i, mem_pct())
 
         # Flush results when >1k.
         if len(self.matches) > 1000:
