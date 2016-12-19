@@ -4,6 +4,8 @@ import os
 import ujson
 import uuid
 
+from datetime import datetime as dt
+
 from quotes.text import Text
 from quotes.models import ChadhNovel, BPOArticle
 
@@ -43,7 +45,7 @@ class ExtAlignments(Scatter):
         # Query BPO articles in the year.
         articles = BPOArticle.query.filter_by(year=year)
 
-        for article in articles:
+        for i, article in enumerate(articles):
 
             b = Text(article.text)
 
@@ -74,6 +76,9 @@ class ExtAlignments(Scatter):
                     b_suffix=b_suffix,
 
                 ))
+
+            # TODO|dev
+            print(dt.now().isoformat(), i)
 
         # Flush results when >1k.
         if len(self.matches) > 1000:
