@@ -8,6 +8,7 @@ from datetime import datetime as dt
 
 from quotes.text import Text
 from quotes.models import ChadhNovel, BPOArticle
+from quotes.utils import mem_pct
 
 from .scatter import Scatter
 
@@ -78,7 +79,7 @@ class ExtAlignments(Scatter):
                 ))
 
             # TODO|dev
-            print(dt.now().isoformat(), i)
+            print(dt.now().isoformat(), i, mem_pct())
 
         # Flush results when >1k.
         if len(self.matches) > 1000:
