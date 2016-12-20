@@ -83,8 +83,8 @@ class ExtAlignments(Scatter):
             except Exception as e:
                 print(e)
 
-            # TODO|dev
-            print('align', dt.now().isoformat(), i, mem_pct())
+            if i % 1000:
+                print('align', dt.now().isoformat(), i, mem_pct())
 
         # Flush results when >1k.
         if len(self.matches) > 1000:
