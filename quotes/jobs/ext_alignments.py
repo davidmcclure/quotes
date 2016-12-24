@@ -4,8 +4,11 @@ import os
 import ujson
 import uuid
 
+from datetime import datetime as dt
+
 from quotes.text import Text
 from quotes.models import ChadhNovel, BPOArticle
+from quotes.utils import mem_pct
 
 from .scatter import Scatter
 
@@ -28,59 +31,60 @@ class ExtAlignments(Scatter):
         Generate (novel id, year) pairs.
         """
 
-        for novel in ChadhNovel.query.all():
+        return ChadhNovel.alignment_pairs()
 
-            # Take articles in first decade after publication.
-            bpo_ids = BPOArticle.ids_in_years(
-                novel.year,
-                novel.year+10,
-            )
-
-            # TODO: Just provide tuple.
-            for bpo_id in bpo_ids:
-                yield dict(chadh_id=novel.id, bpo_id=bpo_id)
-
-    def process(self, chadh_id: int, bpo_id: int):
+    def process(self, novel_id: str, year: int):
 
         """
         Query BPO texts in a given year against a novel.
         """
 
         # Hydrate the Chadwyck novel.
-        novel = ChadhNovel.query.get(chadh_id)
+        novel = ChadhNovel.query.get(novel_id)
         a = Text(novel.text)
 
-        # Hydrate the BPO article.
-        article = BPOArticle.query.get(bpo_id)
-        b = Text(article.text)
+        # Query BPO articles in the year.
+        articles = BPOArticle.query.filter_by(year=year)
 
-        # Align article -> novel.
-        matches = a.match(b)
+        for i, article in enumerate(articles):
 
-        # Record matches.
-        for m in matches:
+            try:
 
-            a_prefix, a_snippet, a_suffix = a.snippet(m.a, m.size)
-            b_prefix, b_snippet, b_suffix = b.snippet(m.b, m.size)
+                b = Text(article.text)
 
-            self.matches.append(dict(
+                # Align article -> novel.
+                matches = a.match(b)
 
-                a_id=novel.id,
-                b_id=article.record_id,
+                # Record matches.
+                for m in matches:
 
-                a_start=m.a,
-                b_start=m.b,
-                size=m.size,
+                    a_prefix, a_snippet, a_suffix = a.snippet(m.a, m.size)
+                    b_prefix, b_snippet, b_suffix = b.snippet(m.b, m.size)
 
-                a_prefix=a_prefix,
-                a_snippet=a_snippet,
-                a_suffix=a_suffix,
+                    self.matches.append(dict(
 
-                b_prefix=b_prefix,
-                b_snippet=b_snippet,
-                b_suffix=b_suffix,
+                        a_id=novel.id,
+                        b_id=article.record_id,
 
-            ))
+                        a_start=m.a,
+                        b_start=m.b,
+                        size=m.size,
+
+                        a_prefix=a_prefix,
+                        a_snippet=a_snippet,
+                        a_suffix=a_suffix,
+
+                        b_prefix=b_prefix,
+                        b_snippet=b_snippet,
+                        b_suffix=b_suffix,
+
+                    ))
+
+            except Exception as e:
+                print(e)
+
+            if i % 1000 == 0:
+                print('align', dt.now().isoformat(), i, mem_pct())
 
         # Flush results when >1k.
         if len(self.matches) > 1000:
