@@ -63,3 +63,18 @@ class BPOArticle(Base):
                 session.commit()
 
                 print(dt.now().isoformat(), i)
+
+    @classmethod
+    def ids_in_years(cls, year1: int, year2: int):
+
+        """
+        Get ids for all articles in a range of years.
+        """
+
+        query = (
+            session
+            .query(cls.record_id)
+            .filter(cls.year >= year1, cls.year <= year2)
+        )
+
+        return [r[0] for r in query]
