@@ -19,6 +19,14 @@ class Scatter:
     def flush(self):
         pass
 
+    def segments(self, size: int):
+
+        """
+        Split the argument list into N partitions.
+        """
+
+        return np.array_split(list(self.args()), size)
+
     def __call__(self):
 
         """
@@ -40,7 +48,7 @@ class Scatter:
 
             segments = [
                 ujson.dumps(list(s))
-                for s in np.array_split(list(self.args()), size)
+                for s in self.segments(size)
             ]
 
         segment = comm.scatter(segments, root=0)
