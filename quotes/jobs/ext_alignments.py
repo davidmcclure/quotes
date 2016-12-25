@@ -4,6 +4,8 @@ import os
 import ujson
 import uuid
 
+import numpy as np
+
 from datetime import datetime as dt
 
 from quotes.text import Text
@@ -32,6 +34,48 @@ class ExtAlignments(Scatter):
         """
 
         return ChadhNovel.alignment_pairs()
+
+    def partitions(self, size: int):
+
+        """
+        Spit novel + year alignment tasks into partitions that roughly balance
+        the total number of alignments for each rank.
+        """
+
+        pair_count = [
+
+            (
+                pair,
+                BPOArticle.query.filter_by(year=pair['year']).count()
+            )
+
+            for pair in self.args()
+
+        ]
+
+        # Sort by count descending.
+        pair_count = sorted(
+            pair_count,
+            key=lambda pc: pc[1],
+            reverse=True
+        )
+
+        # N empty partitions.
+        partitions = [[] for _ in range(size)]
+
+        def min_sum_idx():
+            counts = [sum([a[1] for a in p]) for p in partitions]
+            return np.argmin(counts)
+
+        # Step through pairs, add each to partition with smallest count.
+        for pair, count in pair_count:
+            partitions[min_sum_idx()].append((pair, count))
+
+        # Strip out the counts.
+        return [
+            [pair for pair, count in p]
+            for p in partitions
+        ]
 
     def process(self, novel_id: str, year: int):
 
