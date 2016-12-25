@@ -110,16 +110,13 @@ class ExtAlignments(Scatter):
 
         self.matches = []
 
-    def args(self):
-        """
-        Generate (novel id, year) pairs.
-        """
-        return ChadhNovel.alignment_pairs()
-
     def partitions(self, size: int):
         """
         Spit novel + year alignment tasks into partitions that roughly balance
         the total number of alignments for each rank.
+
+        Args:
+            size (int): MPI size.
         """
         tasks = Tasks()
 
