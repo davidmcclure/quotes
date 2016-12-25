@@ -19,7 +19,7 @@ class Scatter:
     def flush(self):
         pass
 
-    def segments(self, size: int):
+    def partitions(self, size: int):
 
         """
         Split the argument list into N partitions.
@@ -40,20 +40,20 @@ class Scatter:
         size = comm.Get_size()
         rank = comm.Get_rank()
 
-        # ** Scatter JSON-encoded segments.
+        # ** Scatter JSON-encoded partitions.
 
-        segments = None
+        partitions = None
 
         if rank == 0:
 
-            segments = [
+            partitions = [
                 ujson.dumps(list(s))
-                for s in self.segments(size)
+                for s in self.partitions(size)
             ]
 
-        segment = comm.scatter(segments, root=0)
+        partition = comm.scatter(partitions, root=0)
 
-        args = ujson.loads(segment)
+        args = ujson.loads(partition)
 
         print(rank, len(args))
 
