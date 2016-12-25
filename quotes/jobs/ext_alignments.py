@@ -7,12 +7,78 @@ import uuid
 import numpy as np
 
 from datetime import datetime as dt
+from collections import namedtuple
 
 from quotes.text import Text
 from quotes.models import ChadhNovel, BPOArticle
 from quotes.utils import mem_pct
 
 from .scatter import Scatter
+
+
+Task = namedtuple('Task', [
+    'novel_id',
+    'year',
+    'count',
+])
+
+
+class Tasks:
+
+    def __init__(self, years=10):
+
+        """
+        Build a set of (Chadwyck novel id, year, BPO article count) tuples for
+        each of the N years after the publicaton of each novel.
+        """
+
+        self.tasks = []
+
+        for novel in ChadhNovel.query.all():
+            for year in range(novel.year, novel.year+years+1):
+
+                # Count BPO articles in the year
+                count = (
+                    BPOArticle.query
+                    .filter_by(year=year)
+                    .count()
+                )
+
+                self.tasks.append(Task(novel.id, year, count))
+
+    def sorted_tasks(self):
+
+        """
+        Sort tasks by count, descending.
+        """
+
+        return sorted(
+            self.tasks,
+            key=lambda t: t.count,
+            reverse=True,
+        )
+
+    def partitions(self, size: int):
+
+        """
+        Split the tasks into N partitions, each with approximately the same
+        total number of alignment tasks.
+        """
+
+        partitions = [[] for _ in range(size)]
+
+        def min_sum_idx():
+            """Get partition with the smallest task count."""
+            counts = [sum([t.count for t in p]) for p in partitions]
+            return np.argmin(counts)
+
+        for task in self.tasks:
+            partitions[min_sum_idx()].append(task)
+
+        return [
+            [dict(novel_id=t.novel_id, year=t.year) for t in p]
+            for p in partitions
+        ]
 
 
 class ExtAlignments(Scatter):
@@ -42,40 +108,9 @@ class ExtAlignments(Scatter):
         the total number of alignments for each rank.
         """
 
-        pair_count = [
+        tasks = Tasks()
 
-            (
-                pair,
-                BPOArticle.query.filter_by(year=pair['year']).count()
-            )
-
-            for pair in self.args()
-
-        ]
-
-        # Sort by count descending.
-        pair_count = sorted(
-            pair_count,
-            key=lambda pc: pc[1],
-            reverse=True
-        )
-
-        # N empty partitions.
-        partitions = [[] for _ in range(size)]
-
-        def min_sum_idx():
-            counts = [sum([a[1] for a in p]) for p in partitions]
-            return np.argmin(counts)
-
-        # Step through pairs, add each to partition with smallest count.
-        for pair, count in pair_count:
-            partitions[min_sum_idx()].append((pair, count))
-
-        # Strip out the counts.
-        return [
-            [pair for pair, count in p]
-            for p in partitions
-        ]
+        return tasks.partitions(size)
 
     def process(self, novel_id: str, year: int):
 
