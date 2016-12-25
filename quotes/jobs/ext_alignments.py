@@ -33,14 +33,20 @@ class Partitions(list):
         """
         return super().__init__([] for _ in range(size))
 
+    def counts(self):
+        """Get the total alignment counts for each partition.
+
+        Returns: int
+        """
+        return [sum([t.count for t in p]) for p in self]
+
     def add_task(self, task):
         """Add a task to the partition with the lowest count.
 
         Args:
             task (Task)
         """
-        counts = [sum([t.count for t in p]) for p in self]
-        self[np.argmin(counts)].append(task)
+        self[np.argmin(self.counts())].append(task)
 
     def make_args(self):
         """Convert into MPI task args.
@@ -99,7 +105,7 @@ class Tasks:
         for task in self.tasks:
             partitions.add_task(task)
 
-        return partitions.make_args()
+        return partitions
 
 
 class ExtAlignments(Scatter):
@@ -123,7 +129,9 @@ class ExtAlignments(Scatter):
         """
         tasks = Tasks()
 
-        return tasks.partitions(size)
+        partitions = tasks.partitions(size)
+
+        return partitions.make_args()
 
     def process(self, novel_id: int, year: int):
         """Query BPO texts in a given year against a novel.
