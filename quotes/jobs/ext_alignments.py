@@ -23,6 +23,38 @@ Task = namedtuple('Task', [
 ])
 
 
+class Partitions(list):
+
+    def __init__(self, size: int):
+
+        """
+        Create N empty partition lists.
+        """
+
+        return super().__init__([] for _ in range(size))
+
+    def add_task(self, task):
+
+        """
+        Add a task to the partition with the lowest count.
+        """
+
+        counts = [sum([t.count for t in p]) for p in self]
+
+        self[np.argmin(counts)].append(task)
+
+    def make_args(self):
+
+        """
+        Convert into {record_id: int, year: int} args.
+        """
+
+        return [
+            [dict(novel_id=t.novel_id, year=t.year) for t in p]
+            for p in self
+        ]
+
+
 class Tasks:
 
     def __init__(self, years=10):
@@ -65,20 +97,12 @@ class Tasks:
         total number of alignment tasks.
         """
 
-        partitions = [[] for _ in range(size)]
-
-        def min_sum_idx():
-            """Get partition with the smallest task count."""
-            counts = [sum([t.count for t in p]) for p in partitions]
-            return np.argmin(counts)
+        partitions = Partitions(size)
 
         for task in self.tasks:
-            partitions[min_sum_idx()].append(task)
+            partitions.add_task(task)
 
-        return [
-            [dict(novel_id=t.novel_id, year=t.year) for t in p]
-            for p in partitions
-        ]
+        return partitions.make_args()
 
 
 class ExtAlignments(Scatter):
