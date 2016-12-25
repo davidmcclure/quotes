@@ -26,29 +26,30 @@ Task = namedtuple('Task', [
 class Partitions(list):
 
     def __init__(self, size: int):
-
         """
         Create N empty partition lists.
-        """
 
+        Args:
+            size (int): The MPI size.
+        """
         return super().__init__([] for _ in range(size))
 
     def add_task(self, task):
-
         """
         Add a task to the partition with the lowest count.
+
+        Args:
+            task (Task)
         """
-
         counts = [sum([t.count for t in p]) for p in self]
-
         self[np.argmin(counts)].append(task)
 
     def make_args(self):
-
         """
-        Convert into {record_id: int, year: int} args.
-        """
+        Convert into MPI task args.
 
+        Returns: dict(novel_id=int, year=int)
+        """
         return [
             [dict(novel_id=t.novel_id, year=t.year) for t in p]
             for p in self
@@ -58,12 +59,10 @@ class Partitions(list):
 class Tasks:
 
     def __init__(self, years=10):
-
         """
-        Build a set of (Chadwyck novel id, year, BPO article count) tuples for
-        each of the N years after the publicaton of each novel.
+        Build a set of (Chadwyck novel id, year, BPO article count) tuples
+        for each of the N years after the publicaton of each novel.
         """
-
         self.tasks = []
 
         for novel in ChadhNovel.query.all():
@@ -79,11 +78,9 @@ class Tasks:
                 self.tasks.append(Task(novel.id, year, count))
 
     def sorted_tasks(self):
-
         """
         Sort tasks by count, descending.
         """
-
         return sorted(
             self.tasks,
             key=lambda t: t.count,
@@ -91,12 +88,10 @@ class Tasks:
         )
 
     def partitions(self, size: int):
-
         """
         Split the tasks into N partitions, each with approximately the same
         total number of alignment tasks.
         """
-
         partitions = Partitions(size)
 
         for task in self.tasks:
@@ -108,40 +103,36 @@ class Tasks:
 class ExtAlignments(Scatter):
 
     def __init__(self, result_dir: str):
-
         """
         Set the input paths.
         """
-
         self.result_dir = result_dir
 
         self.matches = []
 
     def args(self):
-
         """
         Generate (novel id, year) pairs.
         """
-
         return ChadhNovel.alignment_pairs()
 
     def partitions(self, size: int):
-
         """
         Spit novel + year alignment tasks into partitions that roughly balance
         the total number of alignments for each rank.
         """
-
         tasks = Tasks()
 
         return tasks.partitions(size)
 
-    def process(self, novel_id: str, year: int):
-
+    def process(self, novel_id: int, year: int):
         """
         Query BPO texts in a given year against a novel.
-        """
 
+        Args:
+            novel_id (int): Chadwyck Healey novel id.
+            year (int): Align with BPO articles in this year.
+        """
         # Hydrate the Chadwyck novel.
         novel = ChadhNovel.query.get(novel_id)
         a = Text(novel.text)
@@ -194,11 +185,9 @@ class ExtAlignments(Scatter):
             self.flush()
 
     def flush(self):
-
         """
         Flush the matches to disk, clear cache.
         """
-
         path = os.path.join(
             self.result_dir,
             '{}.json'.format(str(uuid.uuid4())),
