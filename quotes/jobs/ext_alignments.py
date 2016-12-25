@@ -26,8 +26,7 @@ Task = namedtuple('Task', [
 class Partitions(list):
 
     def __init__(self, size: int):
-        """
-        Create N empty partition lists.
+        """Create N empty partition lists.
 
         Args:
             size (int): The MPI size.
@@ -35,8 +34,7 @@ class Partitions(list):
         return super().__init__([] for _ in range(size))
 
     def add_task(self, task):
-        """
-        Add a task to the partition with the lowest count.
+        """Add a task to the partition with the lowest count.
 
         Args:
             task (Task)
@@ -45,10 +43,9 @@ class Partitions(list):
         self[np.argmin(counts)].append(task)
 
     def make_args(self):
-        """
-        Convert into MPI task args.
+        """Convert into MPI task args.
 
-        Returns: dict(novel_id=int, year=int)
+        Returns: list of dict(novel_id=int, year=int)
         """
         return [
             [dict(novel_id=t.novel_id, year=t.year) for t in p]
@@ -59,9 +56,11 @@ class Partitions(list):
 class Tasks:
 
     def __init__(self, years=10):
-        """
-        Build a set of (Chadwyck novel id, year, BPO article count) tuples
+        """Build a set of (Chadwyck novel id, year, BPO article count) tuples
         for each of the N years after the publicaton of each novel.
+
+        Args:
+            years (int): Take this many years after the publication date.
         """
         self.tasks = []
 
@@ -78,8 +77,9 @@ class Tasks:
                 self.tasks.append(Task(novel.id, year, count))
 
     def sorted_tasks(self):
-        """
-        Sort tasks by count, descending.
+        """Sort tasks by count, descending.
+
+        Returns: list of Task
         """
         return sorted(
             self.tasks,
@@ -88,9 +88,11 @@ class Tasks:
         )
 
     def partitions(self, size: int):
-        """
-        Split the tasks into N partitions, each with approximately the same
+        """Split the tasks into N partitions, each with approximately the same
         total number of alignment tasks.
+
+        Args:
+            size (int): MPI size.
         """
         partitions = Partitions(size)
 
@@ -103,16 +105,17 @@ class Tasks:
 class ExtAlignments(Scatter):
 
     def __init__(self, result_dir: str):
-        """
-        Set the input paths.
+        """Set the input paths.
+
+        Args:
+            result_dir (str): Dump results to this directory.
         """
         self.result_dir = result_dir
 
         self.matches = []
 
     def partitions(self, size: int):
-        """
-        Spit novel + year alignment tasks into partitions that roughly balance
+        """Spit novel + year alignment tasks into partitions that roughly balance
         the total number of alignments for each rank.
 
         Args:
@@ -123,8 +126,7 @@ class ExtAlignments(Scatter):
         return tasks.partitions(size)
 
     def process(self, novel_id: int, year: int):
-        """
-        Query BPO texts in a given year against a novel.
+        """Query BPO texts in a given year against a novel.
 
         Args:
             novel_id (int): Chadwyck Healey novel id.
@@ -182,8 +184,7 @@ class ExtAlignments(Scatter):
             self.flush()
 
     def flush(self):
-        """
-        Flush the matches to disk, clear cache.
+        """Flush the matches to disk, clear cache.
         """
         path = os.path.join(
             self.result_dir,
