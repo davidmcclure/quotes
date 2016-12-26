@@ -11,7 +11,7 @@ from test.factories.models import ChadhNovelFactory, BPOArticleFactory
 pytestmark = pytest.mark.usefixtures('db')
 
 
-def test_from_chadh():
+def test_provide_all_tasks():
     """Tasks.from_chadh() should provide all tasks from the Chadwyck novels.
     """
     n1 = ChadhNovelFactory(year=1910)
@@ -27,7 +27,15 @@ def test_from_chadh():
 
     partitions = tasks.partitions(3)
 
-    args = partitions.make_args()
+    args = []
+    for p in partitions.make_args():
+        args += p
 
-    # flatten list
-    # check for each novel + year
+    for year in range(1910, 1920):
+        assert dict(novel_id=n1.id, year=year) in args
+
+    for year in range(1920, 1930):
+        assert dict(novel_id=n2.id, year=year) in args
+
+    for year in range(1930, 1940):
+        assert dict(novel_id=n3.id, year=year) in args
