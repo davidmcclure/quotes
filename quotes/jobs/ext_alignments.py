@@ -74,7 +74,7 @@ class Tasks:
         for novel in ChadhNovel.query.all():
             for year in range(novel.year, novel.year+years+1):
 
-                # Count BPO articles in the year
+                # Count BPO articles in the year.
                 count = (
                     BPOArticle.query
                     .filter_by(year=year)
