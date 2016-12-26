@@ -142,6 +142,9 @@ class ExtAlignments(Scatter):
 
         partitions = tasks.partitions(size)
 
+        # Eyeball the alignment totals.
+        print(partitions.counts())
+
         return partitions.make_args()
 
     def process(self, novel_id: int, year: int):
