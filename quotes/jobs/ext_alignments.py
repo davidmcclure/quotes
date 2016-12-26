@@ -131,6 +131,8 @@ class ExtAlignments(Scatter):
 
         self.matches = []
 
+        self.counter = 0
+
     def partitions(self, size: int):
         """Spit novel + year alignment tasks into partitions that roughly
         balance the total number of alignments for each rank.
@@ -161,7 +163,7 @@ class ExtAlignments(Scatter):
         # Query BPO articles in the year.
         articles = BPOArticle.query.filter_by(year=year)
 
-        for i, article in enumerate(articles):
+        for article in articles:
 
             try:
 
@@ -198,9 +200,11 @@ class ExtAlignments(Scatter):
             except Exception as e:
                 print(e)
 
+            self.counter += 1
+
             # TODO|dev
-            # if i % 1000 == 0:
-            print('align', i, mem_pct(), dt.now().isoformat())
+            if self.counter % 1000 == 0:
+                print('align', self.counter, mem_pct(), dt.now().isoformat())
 
         # Flush results when >1k.
         if len(self.matches) > 1000:
