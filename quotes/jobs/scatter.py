@@ -20,19 +20,16 @@ class Scatter:
         pass
 
     def partitions(self, size: int):
+        """Split the argument list into N partitions.
 
+        Args:
+            size (int): MPI size.
         """
-        Split the argument list into N partitions.
-        """
-
         return np.array_split(list(self.args()), size)
 
     def __call__(self):
-
+        """Dump year -> token -> offset -> count.
         """
-        Dump year -> token -> offset -> count.
-        """
-
         from mpi4py import MPI
 
         comm = MPI.COMM_WORLD
