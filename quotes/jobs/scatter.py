@@ -35,13 +35,13 @@ class Scatter:
         comm = MPI.COMM_WORLD
 
         size = comm.Get_size()
-        rank = comm.Get_rank()
+        self.rank = comm.Get_rank()
 
         # ** Scatter JSON-encoded partitions.
 
         partitions = None
 
-        if rank == 0:
+        if self.rank == 0:
 
             partitions = [
                 ujson.dumps(list(s))
@@ -52,7 +52,7 @@ class Scatter:
 
         args = ujson.loads(partition)
 
-        print(rank, len(args))
+        print(self.rank, len(args))
 
         # ** Gather offsets, flush.
 
@@ -69,6 +69,6 @@ class Scatter:
             except Exception as e:
                 print(e)
 
-            print('scatter', rank, i, mem_pct(), dt.now().isoformat())
+            print('scatter', self.rank, i, mem_pct(), dt.now().isoformat())
 
         self.flush()
