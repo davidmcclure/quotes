@@ -200,7 +200,7 @@ class ExtAlignments(Scatter):
 
             # TODO|dev
             # if i % 1000 == 0:
-            print('align', dt.now().isoformat(), i, mem_pct())
+            print('align', i, mem_pct(), dt.now().isoformat())
 
         # Flush results when >1k.
         if len(self.matches) > 1000:

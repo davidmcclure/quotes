@@ -69,6 +69,6 @@ class Scatter:
             except Exception as e:
                 print(e)
 
-            print('scatter', dt.now().isoformat(), rank, i, mem_pct())
+            print('scatter', rank, i, mem_pct(), dt.now().isoformat())
 
         self.flush()
