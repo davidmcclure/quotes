@@ -61,14 +61,15 @@ class Partitions(list):
 
 class Tasks:
 
-    def __init__(self, years=10):
+    @classmethod
+    def from_chadh(cls, years=10):
         """Build a set of (Chadwyck novel id, year, BPO article count) tuples
         for each of the N years after the publicaton of each novel.
 
         Args:
             years (int): Take this many years after the publication date.
         """
-        self.tasks = []
+        tasks = []
 
         for novel in ChadhNovel.query.all():
             for year in range(novel.year, novel.year+years+1):
@@ -80,7 +81,17 @@ class Tasks:
                     .count()
                 )
 
-                self.tasks.append(Task(novel.id, year, count))
+                tasks.append(Task(novel.id, year, count))
+
+        return cls(tasks)
+
+    def __init__(self, tasks):
+        """Set the list of tasks.
+
+        Args:
+            tasks (list of Task)
+        """
+        self.tasks = tasks
 
     def sorted_tasks(self):
         """Sort tasks by count, descending.
@@ -127,7 +138,7 @@ class ExtAlignments(Scatter):
         Args:
             size (int): MPI size.
         """
-        tasks = Tasks()
+        tasks = Tasks.from_chadh()
 
         partitions = tasks.partitions(size)
 
