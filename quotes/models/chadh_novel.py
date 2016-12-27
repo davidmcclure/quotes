@@ -25,11 +25,8 @@ class ChadhNovel(Base):
 
     @classmethod
     def ingest(cls, corpus_dir: str):
-
+        """Ingest texts.
         """
-        Ingest texts.
-        """
-
         for path in scan_paths(corpus_dir, '\.txt'):
 
             slug = os.path.splitext(os.path.basename(path))[0]
@@ -44,12 +41,9 @@ class ChadhNovel(Base):
 
     @classmethod
     def alignment_pairs(cls, years=10):
-
+        """For each novel, generate (novel id, year) pairs for the N years
+        after the publication of each novel.
         """
-        For each novel, generate (novel id, year) pairs for the N years after
-        the publication of each novel.
-        """
-
         for novel in cls.query.all():
             for year in range(novel.year, novel.year+years+1):
                 yield dict(novel_id=novel.id, year=year)
