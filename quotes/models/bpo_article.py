@@ -3,7 +3,8 @@
 import ujson
 
 from datetime import datetime as dt
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, func
+from collections import OrderedDict
 
 from quotes.services import session
 from quotes.utils import scan_paths
@@ -47,11 +48,8 @@ class BPOArticle(Base):
 
     @classmethod
     def ingest(cls, result_dir: str):
-
+        """Ingest BPO articles.
         """
-        Ingest BPO articles.
-        """
-
         paths = scan_paths(result_dir, '\.json')
 
         # Walk paths.
@@ -63,3 +61,17 @@ class BPOArticle(Base):
                 session.commit()
 
                 print(dt.now().isoformat(), i)
+
+    @classmethod
+    def year_lengths(cls):
+        """Get the total length of the articles, grouped by year.
+
+        Returns: OrderedDict of (year, length)
+        """
+        return OrderedDict(
+            session
+            .query(func.sum(func.length(cls.text)))
+            .group_by(cls.year)
+            .order_by(cls.year)
+            .all()
+        )
