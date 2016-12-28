@@ -70,7 +70,7 @@ class BPOArticle(Base):
         """
         return OrderedDict(
             session
-            .query(func.sum(func.length(cls.text)))
+            .query(cls.year, func.sum(func.length(cls.text)))
             .group_by(cls.year)
             .order_by(cls.year)
             .all()
