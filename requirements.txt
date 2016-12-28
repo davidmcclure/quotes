@@ -21,3 +21,4 @@ flake8
 dataset
 lxml
 ujson
+joblib
