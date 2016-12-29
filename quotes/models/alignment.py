@@ -12,6 +12,8 @@ from sqlalchemy import (
     ForeignKey,
 )
 
+from sqlalchemy.orm import relationship
+
 from quotes.services import session
 from quotes.utils import scan_paths
 
@@ -34,6 +36,9 @@ class Alignment(Base):
     # Texts
     a_id = Column(Integer, ForeignKey('chadh_novel.id'))
     b_id = Column(Integer, ForeignKey('bpo_article.record_id'))
+
+    chadh_novel = relationship('ChadhNovel')
+    bpo_article = relationship('BPOArticle')
 
     # Match
     a_start = Column(Integer, nullable=False)

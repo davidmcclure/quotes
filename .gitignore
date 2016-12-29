@@ -91,4 +91,5 @@ ENV/
 
 # Quotes
 *.db
+*.csv
 cache

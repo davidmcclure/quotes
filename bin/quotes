@@ -1,0 +1,72 @@
+#!/usr/bin/env python
+
+
+import click
+import csv
+
+from quotes.services import session
+from quotes.models import ChadhNovel, BPOArticle, Alignment
+
+
+@click.group()
+def cli():
+    pass
+
+
+@cli.command()
+@click.argument('out_file', type=click.File('w'))
+def alignment_csv(out_file):
+    """Dump alignments to CSV.
+    """
+    writer = csv.DictWriter(out_file, (
+        'chadh_slug',
+        'bpo_pub_title',
+        'bpo_title',
+        'bpo_article_type',
+        'a_start',
+        'b_start',
+        'size',
+        'a_prefix',
+        'a_snippet',
+        'a_suffix',
+        'b_prefix',
+        'b_snippet',
+        'b_suffix',
+    ))
+
+    writer.writeheader()
+
+    alignments = (
+        session
+        .query(Alignment)
+        .join(ChadhNovel, BPOArticle)
+        .filter(Alignment.size >= 5)
+        .yield_per(1000)
+    )
+
+    for a in alignments:
+
+        writer.writerow(dict(
+
+            chadh_slug=a.chadh_novel.slug,
+            bpo_pub_title=a.bpo_article.publication_title,
+            bpo_title=a.bpo_article.record_title,
+            bpo_article_type=a.bpo_article.object_type,
+
+            a_start=a.a_start,
+            b_start=a.b_start,
+            size=a.size,
+
+            a_prefix=a.a_prefix,
+            a_snippet=a.a_snippet,
+            a_suffix=a.a_suffix,
+
+            b_prefix=a.b_prefix,
+            b_snippet=a.b_snippet,
+            b_suffix=a.b_suffix,
+
+        ))
+
+
+if __name__ == '__main__':
+    cli()
