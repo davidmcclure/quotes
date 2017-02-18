@@ -107,6 +107,7 @@ def dump_slices(out_dir, min_articles):
         if articles.count() < min_articles:
             continue
 
+        wc = 0
         for article in articles.limit(min_articles):
 
             fname = str(article.record_id)+'.json'
@@ -115,7 +116,10 @@ def dump_slices(out_dir, min_articles):
             with open_makedirs(path, 'w') as fh:
                 ujson.dump(dict(article), fh)
 
-        print(y1, y2)
+            if article.text:
+                wc += len(article.text.split(' '))
+
+        print(y1, y2, wc)
 
 
 if __name__ == '__main__':
