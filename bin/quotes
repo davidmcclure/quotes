@@ -3,10 +3,15 @@
 
 import click
 import csv
+import os
+import ujson
+
+from boltons.iterutils import pairwise
 
 from quotes.services import session
 from quotes.models import ChadhNovel, BPOArticle, Alignment
 from quotes.text import Text
+from quotes.utils import open_makedirs
 
 
 @click.group()
@@ -84,6 +89,33 @@ def alignment_csv(out_file):
 
         if i % 1000 == 0:
             print(i)
+
+
+@cli.command()
+@click.argument('out_dir', type=click.Path(exists=True))
+@click.option('--min_articles', default=50000)
+def dump_slices(out_dir, min_articles):
+    """Dump time-sliced text JSON, for experiments with historical vectors.
+    """
+    for y1, y2 in pairwise(range(1700, 2000, 20)):
+
+        articles = (
+            BPOArticle.query
+            .filter(BPOArticle.year >= y1, BPOArticle.year <= y2)
+        )
+
+        if articles.count() < min_articles:
+            continue
+
+        for article in articles.limit(min_articles):
+
+            fname = str(article.record_id)+'.json'
+            path = os.path.join(out_dir, str(y1), fname)
+
+            with open_makedirs(path, 'w') as fh:
+                ujson.dump(dict(article), fh)
+
+        print(y1, y2)
 
 
 if __name__ == '__main__':

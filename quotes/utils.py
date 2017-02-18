@@ -5,24 +5,19 @@ import scandir
 import os
 import psutil
 
+from contextlib import contextmanager
 from itertools import islice, chain
 
 
 def clean_text(text: str) -> str:
-
+    """Clean a raw text string.
     """
-    Clean a raw text string.
-    """
-
     return re.sub('\s{2,}|\n', ' ', text.strip())
 
 
 def scan_paths(root_dir: str, pattern: str):
-
+    """Walk a directory and yield file paths that match a pattern.
     """
-    Walk a directory and yield file paths that match a pattern.
-    """
-
     root_dir = os.path.abspath(root_dir)
 
     pattern = re.compile(pattern)
@@ -36,22 +31,17 @@ def scan_paths(root_dir: str, pattern: str):
 
 
 def mem_pct():
-
-    """
-    Get the percentage of available memory used by the process.
+    """Get the percentage of available memory used by the process.
 
     Returns: float
     """
-
     mem = psutil.virtual_memory()
 
     return mem.percent
 
 
 def grouper(iterable, size):
-
-    """
-    Yield "groups" from an iterable.
+    """Yield "groups" from an iterable.
 
     Args:
         iterable (iter): The iterable.
@@ -60,9 +50,20 @@ def grouper(iterable, size):
     Yields:
         The next group.
     """
-
     source = iter(iterable)
 
     while True:
         group = islice(source, size)
         yield chain([next(group)], group)
+
+
+@contextmanager
+def open_makedirs(fpath, *args, **kwargs):
+    """Create the directory for a file, open it.
+    """
+    path = os.path.dirname(fpath)
+
+    os.makedirs(path, exist_ok=True)
+
+    with open(fpath, *args, **kwargs) as fh:
+        yield fh
