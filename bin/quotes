@@ -93,22 +93,33 @@ def alignment_csv(out_file):
 
 @cli.command()
 @click.argument('out_dir', type=click.Path(exists=True))
-@click.option('--min_articles', default=50000)
-def dump_slices(out_dir, min_articles):
+@click.option('--min_wc', default=50e6)
+def dump_slices(out_dir, min_wc):
     """Dump time-sliced text JSON, for experiments with historical vectors.
     """
     for y1, y2 in pairwise(range(1700, 2000, 20)):
 
+        # Select articles in slice.
         articles = (
             BPOArticle.query
             .filter(BPOArticle.year >= y1, BPOArticle.year <= y2)
+            .order_by(BPOArticle.record_id)
         )
 
-        if articles.count() < min_articles:
+        # Count words in articles, until min WC.
+        wc = 0
+        for i, article in enumerate(articles):
+            if article.text:
+                wc += len(article.text.split(' '))
+                if wc > min_wc:
+                    break
+
+        # Skip slices without enough words.
+        if wc < min_wc:
             continue
 
-        wc = 0
-        for article in articles.limit(min_articles):
+        # Dump JSON.
+        for article in articles.limit(i):
 
             fname = str(article.record_id)+'.json'
             path = os.path.join(out_dir, str(y1), fname)
@@ -116,10 +127,7 @@ def dump_slices(out_dir, min_articles):
             with open_makedirs(path, 'w') as fh:
                 ujson.dump(dict(article), fh)
 
-            if article.text:
-                wc += len(article.text.split(' '))
-
-        print(y1, y2, wc)
+        print(y1, y2, i, wc)
 
 
 if __name__ == '__main__':
