@@ -130,5 +130,26 @@ def dump_slices(out_dir, min_wc):
         print(y1, y2, i, wc)
 
 
+@cli.command()
+@click.argument('out_dir', type=click.Path(exists=True))
+def dump_blackwood(out_dir):
+    """Dump Blackwood articles.
+    """
+    # Select Blackwood articles.
+    articles = (
+        BPOArticle.query
+        .filter_by(publication_title="Blackwood's Edinburgh magazine")
+    )
+
+    # Dump JSON.
+    for article in articles:
+
+        fname = str(article.record_id)+'.json'
+        path = os.path.join(out_dir, fname)
+
+        with open_makedirs(path, 'w') as fh:
+            ujson.dump(dict(article), fh)
+
+
 if __name__ == '__main__':
     cli()
