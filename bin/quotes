@@ -151,5 +151,25 @@ def dump_blackwood(out_dir):
             ujson.dump(dict(article), fh)
 
 
+@cli.command()
+@click.argument('out_dir', type=click.Path(exists=True))
+def dump_middlemarch(out_dir):
+    """Dump Middlemarch articles.
+    """
+    for i, article in enumerate(BPOArticle.query.yield_per(1000)):
+
+        if article.text and 'Middlemarch' in article.text:
+
+            fname = str(article.record_id)+'.json'
+            path = os.path.join(out_dir, fname)
+
+            with open_makedirs(path, 'w') as fh:
+                ujson.dump(dict(article), fh)
+                print(article.record_id)
+
+        if i % 1000 == 0:
+            print(i)
+
+
 if __name__ == '__main__':
     cli()
