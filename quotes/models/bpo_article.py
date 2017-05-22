@@ -50,7 +50,7 @@ class BPOArticle(Base):
     def ingest(cls, result_dir: str):
         """Ingest BPO articles.
         """
-        paths = scan_paths(result_dir, '\.json')
+        paths = list(scan_paths(result_dir, '\.json'))[:1]
 
         # Walk paths.
         for i, path in enumerate(paths):
@@ -75,3 +75,11 @@ class BPOArticle(Base):
             .order_by(cls.year)
             .all()
         )
+
+    @classmethod
+    def record_ids(cls):
+        """Materialize full list of record ids.
+
+        Returns: list of int
+        """
+        return [r[0] for r in session.query(cls.record_id).all()]
