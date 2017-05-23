@@ -22,5 +22,4 @@ dataset
 lxml
 ujson
 joblib
-pandas
 click
