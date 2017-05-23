@@ -44,7 +44,7 @@ class Scatter:
         if self.rank == 0:
 
             partitions = [
-                ujson.dumps(list(s))
+                ujson.dumps(s.tolist())
                 for s in self.partitions(size)
             ]
 

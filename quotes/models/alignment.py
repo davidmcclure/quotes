@@ -34,10 +34,10 @@ class Alignment(Base):
     )
 
     # Texts
-    a_id = Column(Integer, ForeignKey('chadh_novel.id'))
+    a_id = Column(Integer, ForeignKey('query_text.id'))
     b_id = Column(Integer, ForeignKey('bpo_article.record_id'))
 
-    chadh_novel = relationship('ChadhNovel')
+    query_text = relationship('QueryText')
     bpo_article = relationship('BPOArticle')
 
     # Match

@@ -8,6 +8,7 @@ import numpy as np
 
 from datetime import datetime as dt
 from collections import namedtuple
+from boltons import iterutils
 
 from quotes.text import Text
 from quotes.models import ChadhNovel, QueryText, BPOArticle
@@ -40,7 +41,7 @@ class ExtAlignments(Scatter):
 
         Returns: list of int
         """
-        return BPOArticle.record_ids()
+        return iterutils.chunked(BPOArticle.record_ids(), 1000)
 
     def process(self, record_ids):
         """Query BPO texts in a given year against a novel.
@@ -64,12 +65,12 @@ class ExtAlignments(Scatter):
                 # Record matches.
                 for m in matches:
 
-                    a_prefix, a_snippet, a_suffix = a.snippet(m.a, m.size)
+                    a_prefix, a_snippet, a_suffix = self.a.snippet(m.a, m.size)
                     b_prefix, b_snippet, b_suffix = b.snippet(m.b, m.size)
 
                     self.matches.append(dict(
 
-                        a_id=novel.id,
+                        a_id=self.query_text.id,
                         b_id=article.record_id,
 
                         a_start=m.a,
