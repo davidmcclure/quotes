@@ -10,7 +10,7 @@ from datetime import datetime as dt
 from collections import namedtuple
 
 from quotes.text import Text
-from quotes.models import ChadhNovel, BPOArticle
+from quotes.models import ChadhNovel, QueryText, BPOArticle
 from quotes.utils import mem_pct
 
 from .scatter import Scatter
@@ -18,12 +18,17 @@ from .scatter import Scatter
 
 class ExtAlignments(Scatter):
 
-    def __init__(self, result_dir: str):
+    def __init__(self, query_slug: str, result_dir: str):
         """Set the input paths.
 
         Args:
+            query_slug (str): Query against this text.
             result_dir (str): Dump results to this directory.
         """
+        self.query_text = QueryText.query.filter_by(slug=query_slug).one()
+
+        self.a = Text(self.query_text.text)
+
         self.result_dir = result_dir
 
         self.matches = []
@@ -44,9 +49,6 @@ class ExtAlignments(Scatter):
             novel_id (int): Chadwyck Healey novel id.
             year (int): Align with BPO articles in this year.
         """
-        # TODO: Parse PL.
-        # a = XXX
-
         # Hydrate the article partition.
         articles = BPOArticle.load_partition(record_ids)
 
@@ -56,8 +58,8 @@ class ExtAlignments(Scatter):
 
                 b = Text(article.text)
 
-                # Align article -> novel.
-                matches = a.match(b)
+                # Align article -> text.
+                matches = self.a.match(b)
 
                 # Record matches.
                 for m in matches:
