@@ -83,3 +83,14 @@ class BPOArticle(Base):
         Returns: list of int
         """
         return [r[0] for r in session.query(cls.record_id).all()]
+
+    @classmethod
+    def load_partition(cls, record_ids):
+        """Hydrate a batch of ids.
+
+        Args:
+            record_ids (list of int)
+
+        Returns: list of cls
+        """
+        return cls.query.filter(cls.record_id.in_(record_ids)).all()

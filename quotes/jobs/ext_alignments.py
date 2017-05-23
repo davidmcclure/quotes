@@ -133,35 +133,25 @@ class ExtAlignments(Scatter):
 
         self.counter = 0
 
-    def partitions(self, size: int):
-        """Spit novel + year alignment tasks into partitions that roughly
-        balance the total number of alignments for each rank.
+    def args(self):
+        """Hydrate the full list of BPO ids.
 
-        Args:
-            size (int): MPI size.
+        Returns: list of int
         """
-        tasks = Tasks.from_chadh()
+        return BPOArticle.record_ids()
 
-        partitions = tasks.partitions(size)
-
-        # Eyeball the alignment totals.
-        print(partitions.counts())
-
-        return partitions.make_args()
-
-    def process(self, novel_id: int, year: int):
+    def process(self, record_ids):
         """Query BPO texts in a given year against a novel.
 
         Args:
             novel_id (int): Chadwyck Healey novel id.
             year (int): Align with BPO articles in this year.
         """
-        # Hydrate the Chadwyck novel.
-        novel = ChadhNovel.query.get(novel_id)
-        a = Text(novel.text)
+        # TODO: Parse PL.
+        # a = XXX
 
-        # Query BPO articles in the year.
-        articles = BPOArticle.query.filter_by(year=year)
+        # Hydrate the article partition.
+        articles = BPOArticle.load_partition(record_ids)
 
         for article in articles:
 
