@@ -43,6 +43,7 @@ def alignment_csv(out_file):
         'b_prefix',
         'b_snippet',
         'b_suffix',
+
     ))
 
     writer.writeheader()
