@@ -10,7 +10,7 @@ from quotes.jobs.ext_alignments import ExtAlignments
 @click.command()
 @click.argument('slug')
 def main(slug):
-    job = ExtAlignments(slug, result_dir=config['alignment_result_dir'])
+    job = ExtAlignments(slug, config['alignment_result_dir'])
     job()
 
 
