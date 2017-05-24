@@ -37,13 +37,13 @@ class ExtAlignments(Scatter):
         self.counter = 0
 
     def args(self):
-        """Hydrate the full list of BPO ids.
+        """Hydrate list of distinct years.
 
         Returns: list of int
         """
-        return iterutils.chunked(BPOArticle.record_ids(), 1000)
+        return BPOArticle.years()
 
-    def process(self, record_ids):
+    def process(self, year):
         """Query BPO texts in a given year against a novel.
 
         Args:
@@ -51,7 +51,7 @@ class ExtAlignments(Scatter):
             year (int): Align with BPO articles in this year.
         """
         # Hydrate the article partition.
-        articles = BPOArticle.load_partition(record_ids)
+        articles = BPOArticle.query.filter_by(year=year)
 
         for article in articles:
 

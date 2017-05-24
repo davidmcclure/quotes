@@ -77,30 +77,9 @@ class BPOArticle(Base):
         )
 
     @classmethod
-    def record_ids(cls):
-        """Materialize full list of record ids.
+    def years(cls):
+        """Get distinct years.
 
         Returns: list of int
         """
-        query = session.query(cls.record_id)
-
-        ids = []
-        for i, row in enumerate(query.yield_per(1000)):
-
-            ids.append(row[0])
-
-            if i % 1000 == 0:
-                print(i)
-
-        return ids
-
-    @classmethod
-    def load_partition(cls, record_ids):
-        """Hydrate a batch of ids.
-
-        Args:
-            record_ids (list of int)
-
-        Returns: list of cls
-        """
-        return cls.query.filter(cls.record_id.in_(record_ids)).all()
+        return [r[0] for r in session.query(cls.year).distinct()]
