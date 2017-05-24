@@ -50,7 +50,7 @@ class BPOArticle(Base):
     def ingest(cls, result_dir: str):
         """Ingest BPO articles.
         """
-        paths = list(scan_paths(result_dir, '\.json'))[:1]
+        paths = scan_paths(result_dir, '\.json')
 
         # Walk paths.
         for i, path in enumerate(paths):
@@ -82,7 +82,17 @@ class BPOArticle(Base):
 
         Returns: list of int
         """
-        return [r[0] for r in session.query(cls.record_id).all()]
+        query = session.query(cls.record_id)
+
+        ids = []
+        for i, row in enumerate(query.yield_per(1000)):
+
+            ids.append(row[0])
+
+            if i % 1000 == 0:
+                print(i)
+
+        return ids
 
     @classmethod
     def load_partition(cls, record_ids):
