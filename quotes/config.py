@@ -77,9 +77,10 @@ class Config(dict):
 
         # Fix transaction bugs in pysqlite.
 
-        # @event.listens_for(engine, 'connect')
-        # def connect(conn, record):
+        @event.listens_for(engine, 'connect')
+        def connect(conn, record):
             # conn.isolation_level = None
+            conn.text_factory = str
 
         # @event.listens_for(engine, 'begin')
         # def begin(conn):
