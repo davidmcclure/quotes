@@ -12,7 +12,6 @@ wordfreq
 numpy
 scandir
 psutil
-mpi4py
 anyconfig
 PyYAML
 invoke
