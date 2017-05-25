@@ -76,8 +76,7 @@ def align_year(text, year):
 
 @click.command()
 @click.argument('slug')
-@click.argument('result_dir', type=click.Path())
-def main(slug, result_dir):
+def main(slug):
     """Align a text against all of BPO.
 
     Args:
