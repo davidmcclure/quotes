@@ -8,7 +8,7 @@ import click
 
 from datetime import datetime as dt
 from functools import partial
-from multiprocessing import Pool
+from multiprocessing import Pool, Manager
 
 from quotes.models import BPOArticle, QueryText
 from quotes.text import Text
@@ -16,7 +16,7 @@ from quotes.services import config, session
 from quotes.utils import mem_pct
 
 
-def align_year(text, year):
+def align_year(lock, text, year):
     """Given a year, align the text identifier by slug with all BPO articles in
     the passed year.
 
@@ -28,8 +28,9 @@ def align_year(text, year):
     a = Text(text.text)
 
     # Load articles in year.
+    lock.acquire()
     articles = session().query(BPOArticle).filter_by(year=year)
-    # articles = BPOArticle.query.filter_by(year=year)
+    lock.release()
 
     matches = []
     for i, article in enumerate(articles):
@@ -90,8 +91,12 @@ def main(slug):
     # Get list of years.
     years = BPOArticle.years()
 
-    # Bind text to worker call.
-    worker = partial(align_year, text)
+    # Get the lock instance.
+    manager = Manager()
+    lock = manager.Lock()
+
+    # Bind lock + text to worker.
+    worker = partial(align_year, lock, text)
 
     with Pool() as pool:
 

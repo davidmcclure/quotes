@@ -75,6 +75,7 @@ class Config(dict):
 
         engine = create_engine(url)
 
+        # Avoid utf8 decoding problems with BPO.
         engine.raw_connection().connection.text_factory = str
 
         # Fix transaction bugs in pysqlite.
