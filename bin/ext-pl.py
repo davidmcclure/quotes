@@ -39,9 +39,6 @@ def align_year(lock, text, year):
 
             b = Text(article.text)
 
-            # Align article -> text.
-            # matches = a.match(b)
-
             # Record matches.
             for m in a.match(b):
 
@@ -90,6 +87,8 @@ def main(slug):
 
     # Get list of years.
     years = BPOArticle.years()
+
+    session.close()
 
     # Get the lock instance.
     manager = Manager()
