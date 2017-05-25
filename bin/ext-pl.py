@@ -15,7 +15,7 @@ from quotes.text import Text
 from quotes.utils import mem_pct
 
 
-def align_year(slug, year):
+def align_year(text, year):
     """Given a year, align the text identifier by slug with all BPO articles in
     the passed year.
 
@@ -24,7 +24,6 @@ def align_year(slug, year):
         year (int)
     """
     # Hydrate the query text.
-    text = QueryText.query.filter_by(slug=slug).one()
     a = Text(text.text)
 
     # Load articles in year.
@@ -84,9 +83,11 @@ def main(slug, result_dir):
         slug (str)
         result_dir (str)
     """
+    text = QueryText.query.filter_by(slug=slug).one()
+
     years = BPOArticle.years()
 
-    worker = partial(align_year, slug)
+    worker = partial(align_year, text)
 
     with Pool() as pool:
 
