@@ -13,6 +13,7 @@ from multiprocessing import Pool
 from quotes.models import BPOArticle, QueryText
 from quotes.text import Text
 from quotes.utils import mem_pct
+from quotes.services import config
 
 
 def align_year(text, year):
@@ -23,7 +24,7 @@ def align_year(text, year):
         slug (str)
         year (int)
     """
-    # Hydrate the query text.
+    # Wrap the query text.
     a = Text(text.text)
 
     # Load articles in year.
@@ -83,10 +84,13 @@ def main(slug, result_dir):
         slug (str)
         result_dir (str)
     """
+    # Hydrate the query text.
     text = QueryText.query.filter_by(slug=slug).one()
 
+    # Get list of years.
     years = BPOArticle.years()
 
+    # Bind text to worker call.
     worker = partial(align_year, text)
 
     with Pool() as pool:
@@ -97,7 +101,10 @@ def main(slug, result_dir):
 
             fname = str(uuid.uuid4())
 
-            path = os.path.join(result_dir, '{}.json'.format(fname))
+            path = os.path.join(
+                config['alignment_result_dir'],
+                '{}.json'.format(fname),
+            )
 
             with open(path, 'w') as fh:
                 ujson.dump(matches, fh)
