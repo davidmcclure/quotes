@@ -12,8 +12,8 @@ from multiprocessing import Pool
 
 from quotes.models import BPOArticle, QueryText
 from quotes.text import Text
+from quotes.services import config, session
 from quotes.utils import mem_pct
-from quotes.services import config
 
 
 def align_year(text, year):
@@ -28,7 +28,8 @@ def align_year(text, year):
     a = Text(text.text)
 
     # Load articles in year.
-    articles = BPOArticle.query.filter_by(year=year)
+    articles = session().query(BPOArticle).filter_by(year=year)
+    # articles = BPOArticle.query.filter_by(year=year)
 
     matches = []
     for i, article in enumerate(articles):
