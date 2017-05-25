@@ -20,7 +20,7 @@ class Config(dict):
         Get a config instance with the default files.
         """
 
-        root = os.environ.get('QUOTES_CONFIG', '~/.quotes')
+        root = os.environ.get('QUOTES_CONFIG', '/etc/quotes')
 
         # Default paths.
         paths = [
