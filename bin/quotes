@@ -10,7 +10,6 @@ from boltons.iterutils import pairwise
 
 from quotes.services import session
 from quotes.models import ChadhNovel, BPOArticle, Alignment
-from quotes.text import Text
 from quotes.utils import open_makedirs
 
 
@@ -30,11 +29,11 @@ def alignment_csv(out_file):
         'bpo_pub_title',
         'bpo_title',
         'bpo_article_type',
+        'bpo_year',
 
         'a_start',
         'b_start',
         'size',
-        'a_token_count',
 
         'a_prefix',
         'a_snippet',
@@ -56,15 +55,7 @@ def alignment_csv(out_file):
         .yield_per(1000)
     )
 
-    counts = {}
-
     for i, a in enumerate(alignments):
-
-        slug = a.chadh_novel.slug
-
-        if slug not in counts:
-            text = Text(a.chadh_novel.text)
-            counts[slug] = len(text.tokens)
 
         writer.writerow(dict(
 
@@ -72,11 +63,11 @@ def alignment_csv(out_file):
             bpo_pub_title=a.bpo_article.publication_title,
             bpo_title=a.bpo_article.record_title,
             bpo_article_type=a.bpo_article.object_type,
+            bpo_year=a.bpo_article.year,
 
             a_start=a.a_start,
             b_start=a.b_start,
             size=a.size,
-            a_token_count=counts[slug],
 
             a_prefix=a.a_prefix,
             a_snippet=a.a_snippet,
