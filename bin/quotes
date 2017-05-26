@@ -9,7 +9,7 @@ import ujson
 from boltons.iterutils import pairwise
 
 from quotes.services import session
-from quotes.models import ChadhNovel, BPOArticle, Alignment
+from quotes.models import QueryText, BPOArticle, Alignment
 from quotes.utils import open_makedirs
 
 
@@ -25,7 +25,7 @@ def alignment_csv(out_file):
     """
     writer = csv.DictWriter(out_file, (
 
-        'chadh_slug',
+        'query_slug',
         'bpo_pub_title',
         'bpo_title',
         'bpo_article_type',
@@ -50,7 +50,7 @@ def alignment_csv(out_file):
     alignments = (
         session
         .query(Alignment)
-        .join(ChadhNovel, BPOArticle)
+        .join(QueryText, BPOArticle)
         .filter(Alignment.size >= 5)
         .yield_per(1000)
     )
@@ -59,7 +59,7 @@ def alignment_csv(out_file):
 
         writer.writerow(dict(
 
-            chadh_slug=a.chadh_novel.slug,
+            query_slug=a.query_text.slug,
             bpo_pub_title=a.bpo_article.publication_title,
             bpo_title=a.bpo_article.record_title,
             bpo_article_type=a.bpo_article.object_type,
